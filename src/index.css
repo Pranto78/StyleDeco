@@ -1,9 +1,41 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* 🌙 CUSTOM THEME (Tailwind v4 style) */
 @plugin "daisyui/theme" {
     name: "dark";
     default: true;
-    --color-primary: blue;
-    --color-secondary: teal;
+
+    /* Base colors (required) */
+    --color-primary: #2563eb;
+    /* Blue-600 */
+    --color-secondary: #374151;
+    /* Gray-700 */
+
+    /* Optional accent gradient classes */
+    --btn-primary-gradient: linear-gradient(90deg, #1e40af, #0284c7, #059669);
+    --btn-secondary-gradient: linear-gradient(90deg, #6b7280, #000000);
+}
+
+/* Gradient utility classes */
+.btn-primary-gradient {
+    background: var(--btn-primary-gradient);
+}
+
+.btn-secondary-gradient {
+    background: var(--btn-secondary-gradient);
+}
+
+
+.text-primary-gradient {
+    background: var(--btn-primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+.text-secondary-gradient {
+    background: var(--btn-secondary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }

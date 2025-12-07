@@ -1,57 +1,65 @@
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import { Autoplay } from 'swiper/modules';
-import Banner from './Banner';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import hero1 from '../../assets/Picture1.jpg';
+import hero2 from '../../assets/Picture2.jpg';
+import hero3 from '../../assets/Picture3.jpg';
+import hero4 from '../../assets/Picture4.jpg';
+import hero5 from '../../assets/Picture5.jpg';
+
+const images = [hero1, hero2, hero3, hero4, hero5];
 
 const Hero = () => {
-    const navigate = useNavigate();
-    return (
-        <div className="my-8">
-            <Swiper
-                modules={[Autoplay]}
-                autoplay={{ delay: 2500, disableOnInteraction: false }}
-                loop
-            >
-                {/* Slide 1 */}
-                <SwiperSlide>
-                    <Banner
-                        imageUrl="https://img.freepik.com/free-vector/cartoon-graphic-design-landing-page_52683-70881.jpg?semt=ais_hybrid&w=740&q=80"
-                        linkUrl="/courses/graphic-design"
-                        title="Graphic Design Basics"
-                        paragraph="Learn design principles, create social media graphics & logos using Canva and Photoshop."
-                        buttonText="View Course"
-                        onButtonClick={() => navigate("/skill/7")}
-                    />
-                </SwiperSlide>
+  const [index, setIndex] = useState(0);
 
-                {/* Slide 2 */}
-                <SwiperSlide>
-                    <Banner
-                        imageUrl="https://media.licdn.com/dms/image/v2/D5612AQEeG7oJTTK1Ew/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1680514548971?e=2147483647&v=beta&t=ZflFgTlsj2QryThKQ9JiTbBZ3SyYxPoPY2NLv8-Aa3o"
-                        linkUrl="/courses/graphic-design"
-                        title="Frontend Web Development"
-                        paragraph="Learn HTML, CSS, and JavaScript fundamentals to build responsive and interactive websites."
-                        buttonText="View Course"
-                        onButtonClick={() => navigate("/skill/8")}
-                    />
-                </SwiperSlide>
+  // Slide interval
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length);
+    }, 3000); // slide every 3 seconds
+    return () => clearInterval(interval);
+  }, []);
 
-                {/* slide - 03 */}
+  return (
+    <div className="relative w-full h-screen overflow-hidden">
+      {/* Sliding images */}
+      <div className="flex w-full h-full">
+        <motion.div
+          className="flex w-full h-full"
+          animate={{ x: `-${index * 100}%` }}
+          transition={{ type: "tween", duration: 1 }}
+        >
+          {images.map((img, i) => (
+            <div key={i} className="w-full h-full flex-shrink-0">
+              <img
+                src={img}
+                alt={`hero-${i}`}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </motion.div>
+      </div>
 
-                <SwiperSlide>
-                    <Banner
-                        imageUrl="https://eduurban.com/wp-content/uploads/2022/09/Rev_Web_Banner_Edu_Urban_a_Spoken_English_Main_Banner.jpg"
-                        linkUrl="/courses/graphic-design"
-                        title="Spoken English Practice"
-                        paragraph="Interactive English conversation sessions for non-native speakers. Focus on fluency and pronunciation."
-                        buttonText="View Course"
-                        onButtonClick={() => navigate("/skill/2")}
-                    />
-                </SwiperSlide>
-            </Swiper>
-        </div>
-    );
+      {/* Overlay for text */}
+      <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center px-4">
+        <motion.h1
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="text-4xl md:text-6xl font-bold text-white text-center mb-6"
+        >
+          Transform Your Space with Stunning Decorations!
+        </motion.h1>
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="btn-primary-gradient text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:opacity-90 transition"
+        >
+          Book Decoration Service
+        </motion.button>
+      </div>
+    </div>
+  );
 };
 
 export default Hero;

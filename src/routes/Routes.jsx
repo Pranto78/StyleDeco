@@ -6,6 +6,8 @@ import ErrorPage from '../pages/Error/ErrorPage';
 import { LogIn } from 'lucide-react';
 import Registration from '../components/Registration/Registration';
 import Login from '../components/Login/Login';
+import Dashboard from '../components/Dashboard/Dashboard';
+import PrivateRoute from './PrivateRoute';
 
 
 
@@ -16,18 +18,26 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: '/',
+        path: "/",
         index: true,
         Component: Home,
       },
       {
-        path:'login',
-        element: <Login></Login>
+        path: "login",
+        element: <Login></Login>,
       },
       {
-        path:'signup',
-        element:<Registration></Registration>
-      }
-    ]
+        path: "signup",
+        element: <Registration></Registration>,
+      },
+    ],
+  },
+  {
+    path: "dashboard",
+    element: (
+      <PrivateRoute>
+        <Dashboard></Dashboard>
+      </PrivateRoute>
+    ),
   },
 ]);

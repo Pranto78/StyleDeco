@@ -30,9 +30,27 @@ const Navbar = () => {
       </li>
       <li>
         <NavLink to="/profile" style={getLinkStyle}>
-          My Profile
+          Services
         </NavLink>
       </li>
+      <li>
+        <NavLink to="/profile" style={getLinkStyle}>
+          About
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/profile" style={getLinkStyle}>
+          Contact
+        </NavLink>
+      </li>
+
+      {user && (
+        <li>
+          <NavLink to="/dashboard" style={getLinkStyle}>
+            Dashboard
+          </NavLink>
+        </li>
+      )}
     </>
   );
 
@@ -61,7 +79,7 @@ const Navbar = () => {
             {links}
           </ul>
         </div>
-        <Link to="/" className="btn btn-ghost text-xl font-bold">
+        <Link to="/" className="btn btn-ghost font-bold text-primary-gradient text-2xl">
           StyleDecor
         </Link>
       </div>
@@ -97,7 +115,10 @@ const Navbar = () => {
                   <Link to="/profile">Profile</Link>
                 </li>
                 <li>
-                  <button onClick={handleLogout} className="text-red-500">
+                  <button
+                    onClick={handleLogout}
+                    className="btn-primary-gradient"
+                  >
                     Logout
                   </button>
                 </li>
@@ -109,13 +130,13 @@ const Navbar = () => {
           <>
             <Link
               to="/login"
-              className="btn-primary px-3 bg-gray-400 rounded py-1 text-white"
+              className="btn-primary-gradient px-3 bg-gray-400 rounded py-1 text-white"
             >
               Login
             </Link>
             <Link
               to="/signup"
-              className="btn-primary px-3 bg-gray-400 rounded py-1 text-white"
+              className="btn-primary-gradient px-3 rounded py-1 text-white"
             >
               Sign Up
             </Link>
