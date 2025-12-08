@@ -1,21 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
+// AuthContext.jsx  ← your exact file, only fixed
+import { createContext, useState, useEffect } from "react";
 import {
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
+  getAuth,
   onAuthStateChanged,
+  signOut,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signOut,
+  createUserWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../Firebase/firebase.config";
-// import { auth } from "../../firebase/firebase.init";
+import axios from "axios";
+import { AuthContext } from "./AuthContext"; // ← this is correct if you have AuthContext.js separately
 
 const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
+  const [adminEmail, setAdminEmail] = useState(
+    localStorage.getItem("adminEmail")
+  );
   const [loading, setLoading] = useState(true);
 
   const registerUser = (email, password) => {
@@ -33,34 +39,88 @@ const AuthProvider = ({ children }) => {
     return signInWithPopup(auth, googleProvider);
   };
 
-  const logOut = () => {
+  const updateUserProfile = (profile) =>
+    updateProfile(auth.currentUser, profile);
+
+  const logOut = async () => {
     setLoading(true);
-    return signOut(auth);
+    if (adminEmail) {
+      localStorage.removeItem("adminEmail");
+      setAdminEmail(null);
+      setRole(null);
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+    await signOut(auth);
+    setUser(null);
+    setRole(null);
+    setLoading(false);
   };
 
-  const updateUserProfile = (profile) => {
-    return updateProfile(auth.currentUser, profile);
+  const fetchRole = async (currentUser) => {
+    try {
+      if (adminEmail) {
+        setRole("admin");
+        return;
+      }
+      const token = await currentUser.getIdToken();
+      const res = await axios.get("http://localhost:3000/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setRole(res.data.role);
+    } catch (err) {
+      setRole(null);
+    }
   };
 
-  // observe user state
+  // Firebase listener (unchanged)
   useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) await fetchRole(currentUser);
+      else setRole(null);
       setLoading(false);
     });
-    return () => {
-      unSubscribe();
-    };
+    return () => unsubscribe();
   }, []);
+
+  // ONLY THIS PART IS ADDED – detects admin from localStorage on refresh or manual login
+  useEffect(() => {
+    const checkAdminFromStorage = () => {
+      const savedAdminEmail = localStorage.getItem("adminEmail");
+      if (savedAdminEmail && !user) {
+        // Fake a user object so Navbar & PrivateRoute think someone is logged in
+        setUser({
+          email: savedAdminEmail,
+          displayName: "Administrator",
+          photoURL: null,
+        });
+        setRole("admin");
+        setAdminEmail(savedAdminEmail);
+        setLoading(false);
+      }
+    };
+
+    checkAdminFromStorage();
+    window.addEventListener("admin-logged-in", checkAdminFromStorage);
+
+    return () => {
+      window.removeEventListener("admin-logged-in", checkAdminFromStorage);
+    };
+  }, [user]); // re-run when Firebase user changes
 
   const authInfo = {
     user,
+    role,
+    adminEmail,
     loading,
     registerUser,
     signInUser,
     signInGoogle,
-    logOut,
     updateUserProfile,
+    logOut,
+    setAdminEmail,
   };
 
   return <AuthContext value={authInfo}>{children}</AuthContext>;

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import UseAuthContext from "../../Hooks/UseAuthContext";
+// import UseAuthContext from "../../Hooks/UseAuthContext";
 
 
 // Active link style function
@@ -10,8 +11,11 @@ const getLinkStyle = ({ isActive }) => ({
   paddingBottom: "2px",
 });
 
+const adminEmail = localStorage.getItem("adminEmail");
+
+
 const Navbar = () => {
-  const { user, logOut } = UseAuthContext();
+  const { user, logOut,role } = UseAuthContext();
 
   const handleLogout = async () => {
     try {
@@ -44,13 +48,14 @@ const Navbar = () => {
         </NavLink>
       </li>
 
-      {user && (
+      {/* NEW (working) */}
+      {user || adminEmail ? (
         <li>
           <NavLink to="/dashboard" style={getLinkStyle}>
             Dashboard
           </NavLink>
         </li>
-      )}
+      ) : null}
     </>
   );
 
@@ -79,7 +84,10 @@ const Navbar = () => {
             {links}
           </ul>
         </div>
-        <Link to="/" className="btn btn-ghost font-bold text-primary-gradient text-2xl">
+        <Link
+          to="/"
+          className="btn btn-ghost font-bold text-primary-gradient text-2xl"
+        >
           StyleDecor
         </Link>
       </div>
@@ -96,15 +104,21 @@ const Navbar = () => {
           <>
             {/* User Photo */}
             <div className="dropdown dropdown-end">
-              <label tabIndex={0} className="cursor-pointer">
-                <img
-                  src={
-                    user.photoURL || "https://i.ibb.co/0F6F4V4/default-user.png"
-                  }
-                  alt="User"
-                  className="w-10 h-10 rounded-full border border-gray-300"
-                />
-              </label>
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-circle avatar"
+              >
+                <div className="w-10 rounded-full">
+                  <img
+                    src={
+                      user?.photoURL ||
+                      "https://i.ibb.co.com/k63VV2qG/software-engineer.png"
+                    }
+                    alt="User"
+                  />
+                </div>
+              </div>
 
               {/* Dropdown Menu */}
               <ul

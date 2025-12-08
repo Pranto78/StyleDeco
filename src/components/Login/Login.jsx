@@ -12,17 +12,51 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    try {
+      // 1. Try admin login
+      const res = await fetch("http://localhost:3000/admin-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: pass }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("adminEmail", data.email);
+        localStorage.setItem("adminRole", "admin");
+
+        // This triggers the useEffect in AuthProvider
+        window.dispatchEvent(new Event("admin-logged-in"));
+
+        navigate("/dashboard"); // or "/" → both will work now
+        return;
+      }
+    } catch (err) {
+      console.log("Admin login failed, trying Firebase...");
+    }
+
+    // 2. If not admin → Firebase login
     signInUser(email, pass)
       .then(() => navigate("/"))
       .catch((err) => console.log(err.message));
   };
+
 
   const handleGoogleLogin = () => {
     signInGoogle()
       .then(() => navigate("/"))
       .catch((err) => console.log(err.message));
   };
+
+
+//   -------------------------
+
+
+
+
+// ---------------------
 
   return (
     <div className="min-h-screen bg-base-200 flex items-center justify-center px-4">

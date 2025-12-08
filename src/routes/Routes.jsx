@@ -1,43 +1,88 @@
-import React from 'react';
+import React from "react";
 import { createBrowserRouter } from "react-router-dom";
-import Root from '../Root/Root';
-import Home from '../pages/Home/Home';
-import ErrorPage from '../pages/Error/ErrorPage';
-import { LogIn } from 'lucide-react';
-import Registration from '../components/Registration/Registration';
-import Login from '../components/Login/Login';
-import Dashboard from '../components/Dashboard/Dashboard';
-import PrivateRoute from './PrivateRoute';
-
-
+import Root from "../Root/Root";
+import Home from "../pages/Home/Home";
+import ErrorPage from "../pages/Error/ErrorPage";
+import Registration from "../components/Registration/Registration";
+import Login from "../components/Login/Login";
+import Dashboard from "../components/Dashboard/Dashboard";
+import PrivateRoute from "./PrivateRoute";
+import ManageDecorator from "../components/Dashboard/AdminElement/ManageDecorator";
+import AdminRoute from "./AdminRoute";
+import ManageService from "../components/Dashboard/AdminElement/ManageService";
+import ManageBooking from "../components/Dashboard/AdminElement/ManageBooking";
+import AssignDecorator from "../components/Dashboard/AdminElement/AssignDecorator";
+import AnalyticsCharts from "../components/Dashboard/AdminElement/AnalyticsCharts";
+import RevenueMonitoring from "../components/Dashboard/AdminElement/RevenueMonitoring";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: Root,
+    element: <Root />,
     errorElement: <ErrorPage />,
     children: [
-      {
-        path: "/",
-        index: true,
-        Component: Home,
-      },
-      {
-        path: "login",
-        element: <Login></Login>,
-      },
-      {
-        path: "signup",
-        element: <Registration></Registration>,
-      },
+      { path: "/", index: true, element: <Home /> },
+      { path: "login", element: <Login /> },
+      { path: "signup", element: <Registration /> },
     ],
   },
   {
-    path: "dashboard",
+    path: "/dashboard",
+    errorElement: <ErrorPage />,
     element: (
       <PrivateRoute>
-        <Dashboard></Dashboard>
+        <Dashboard />
       </PrivateRoute>
     ),
+    children: [
+      {
+        path: "/dashboard/manage-decorators",
+        element: (
+          <AdminRoute>
+            <ManageDecorator></ManageDecorator>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/manage-services",
+        element: (
+          <AdminRoute>
+            <ManageService></ManageService>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/manage-bookings",
+        element: (
+          <AdminRoute>
+            <ManageBooking></ManageBooking>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/assign-decorator",
+        element: (
+          <AdminRoute>
+            <AssignDecorator></AssignDecorator>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/analytics-charts",
+        element: (
+          <AdminRoute>
+            <AnalyticsCharts></AnalyticsCharts>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/revenue-monitoring",
+        element: (
+          <AdminRoute>
+            <RevenueMonitoring></RevenueMonitoring>
+          </AdminRoute>
+        ),
+      },
+    ],
   },
 ]);
