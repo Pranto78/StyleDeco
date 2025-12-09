@@ -19,6 +19,7 @@ import Services from "../components/Services/Services";
 import MyProfle from "../components/Dashboard/User/MyProfle";
 import MyBooking from "../components/Dashboard/User/MyBooking";
 import PaymentHistory from "../components/Dashboard/User/PaymentHistory";
+import PaymentCancel from "../components/Dashboard/User/PaymentCancel";
 
 export const router = createBrowserRouter([
   {
@@ -62,7 +63,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard/payment-history",
-        element:<PaymentHistory></PaymentHistory>
+        element: <PaymentHistory></PaymentHistory>,
+      },
+      {
+        path: "payment-cancelled",
+        element:<PaymentCancel></PaymentCancel>
       },
       {
         path: "/dashboard/manage-decorators",

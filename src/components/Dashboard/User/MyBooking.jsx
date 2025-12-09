@@ -33,6 +33,32 @@ const MyBooking = () => {
       </p>
     );
 
+    const handelPayment = async (booking) => {
+      try {
+        const paymentInfo = {
+          cost: booking.cost,
+          bookId: booking._id,
+          senderEmail: booking.userEmail,
+          serviceName: booking.serviceName,
+        };
+
+        const res = await axiosSecure.post(
+          "/create-checkout-session",
+          paymentInfo
+        );
+
+        if (res.data.url) {
+          window.location.href = res.data.url; // redirect to Stripe
+        } else {
+          toast.error("Failed to start payment session");
+        }
+      } catch (error) {
+        console.error("Payment error:", error);
+        toast.error("Payment initialization failed");
+      }
+    };
+
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -83,8 +109,8 @@ const MyBooking = () => {
                     <span
                       className={`px-3 py-1 rounded-lg text-sm ${
                         b.status === "pending"
-                          ? "bg-yellow-600 text-yellow-100"
-                          : "bg-green-600 text-green-100"
+                          ? "bg-yellow-600 text-white font-bold"
+                          : "bg-green-600 text-white font-bold"
                       }`}
                     >
                       {b.status}
@@ -96,10 +122,8 @@ const MyBooking = () => {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.9 }}
-                        className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg"
-                        onClick={() =>
-                          toast.success("Payment gateway coming soon!")
-                        }
+                        className="px-4 py-2 rounded-lg btn-primary-gradient text-white shadow-lg"
+                        onClick={() => handelPayment(b)}
                       >
                         Pay Now
                       </motion.button>
