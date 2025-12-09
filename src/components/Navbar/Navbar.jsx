@@ -126,7 +126,7 @@ const Navbar = () => {
                 className="menu menu-sm dropdown-content bg-base-100 mt-3 w-40 rounded-box shadow"
               >
                 <li>
-                  <Link to="/profile">Profile</Link>
+                  <Link to="/dashboard/profile">Profile</Link>
                 </li>
                 <li>
                   <button
