@@ -14,7 +14,12 @@
 
     /* Optional accent gradient classes */
     --btn-primary-gradient: linear-gradient(90deg, #1e40af, #0284c7, #059669);
-    --btn-secondary-gradient: linear-gradient(90deg, #6b7280, #000000);
+    --btn-secondary-gradient: linear-gradient(90deg,
+                rgba(0, 0, 0, 0.6),
+                /* semi-transparent black start */
+                rgba(0, 0, 0, 0.2)
+                /* lighter transparent black end */
+            );
 }
 
 /* Gradient utility classes */
@@ -24,6 +29,11 @@
 
 .btn-secondary-gradient {
     background: var(--btn-secondary-gradient);
+}
+
+.btn-primary-gradient-hover {
+    background: linear-gradient(90deg, #102d5d, #4090f1);
+    /* lighter blue on hover */
 }
 
 
@@ -38,4 +48,8 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+}
+
+.bg-secondary-gradient {
+    background: var(--btn-secondary-gradient);
 }

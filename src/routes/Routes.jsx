@@ -14,6 +14,8 @@ import ManageBooking from "../components/Dashboard/AdminElement/ManageBooking";
 import AssignDecorator from "../components/Dashboard/AdminElement/AssignDecorator";
 import AnalyticsCharts from "../components/Dashboard/AdminElement/AnalyticsCharts";
 import RevenueMonitoring from "../components/Dashboard/AdminElement/RevenueMonitoring";
+import ServiceDetails from "../components/ServiceDetails/ServiceDetails";
+import Services from "../components/Services/Services";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +26,18 @@ export const router = createBrowserRouter([
       { path: "/", index: true, element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Registration /> },
+      {
+        path:"services",
+        element:<Services></Services>
+      },
+      {
+        path: "service-details/:id",
+        element: (
+          <PrivateRoute>
+            <ServiceDetails></ServiceDetails>
+          </PrivateRoute>
+        ),
+      },
     ],
   },
   {

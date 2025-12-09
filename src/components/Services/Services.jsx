@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import UseAxiosSecure from "../../Hooks/UseAxiosSecure";
-// import UseAxiosSecure from "../hooks/UseAxiosSecure";
+// import UseAxiosSecure from "../hooks/UseAxiosSecure"; // import your secure axios hook
 
-const FeaturedService = () => {
+const Services = () => {
   const [services, setServices] = useState([]);
-  const axiosSecure = UseAxiosSecure();
+  const axiosSecure = UseAxiosSecure(); // use secure axios instance
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await axiosSecure.get("/services");
+        const res = await axiosSecure.get("/services"); // automatic JWT attached
         setServices(res.data);
       } catch (err) {
         console.error("Failed to fetch services:", err.response || err);
@@ -30,7 +30,7 @@ const FeaturedService = () => {
         transition={{ duration: 0.7 }}
         className="text-4xl text-primary-gradient font-bold text-center mb-10"
       >
-        Featured <span className="">Services</span>
+        All Services
       </motion.h2>
 
       {/* GRID */}
@@ -82,4 +82,4 @@ const FeaturedService = () => {
   );
 };
 
-export default FeaturedService;
+export default Services;

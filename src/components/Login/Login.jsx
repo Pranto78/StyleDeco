@@ -24,6 +24,7 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
+        localStorage.setItem("adminToken", data.token);
         localStorage.setItem("adminEmail", data.email);
         localStorage.setItem("adminRole", "admin");
 
