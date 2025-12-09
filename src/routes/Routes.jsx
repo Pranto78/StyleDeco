@@ -20,6 +20,7 @@ import MyProfle from "../components/Dashboard/User/MyProfle";
 import MyBooking from "../components/Dashboard/User/MyBooking";
 import PaymentHistory from "../components/Dashboard/User/PaymentHistory";
 import PaymentCancel from "../components/Dashboard/User/PaymentCancel";
+import PaymentSuccess from "../components/Dashboard/User/PaymentSuccess";
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
       {
         path: "payment-cancelled",
         element:<PaymentCancel></PaymentCancel>
+      },
+      {
+        path:"payment-success",
+        element:<PaymentSuccess></PaymentSuccess>
       },
       {
         path: "/dashboard/manage-decorators",

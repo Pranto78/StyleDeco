@@ -49,7 +49,8 @@ const MyBooking = () => {
 
         if (res.data.url) {
           window.location.href = res.data.url; // redirect to Stripe
-        } else {
+        }
+         else {
           toast.error("Failed to start payment session");
         }
       } catch (error) {
