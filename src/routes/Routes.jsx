@@ -16,6 +16,9 @@ import AnalyticsCharts from "../components/Dashboard/AdminElement/AnalyticsChart
 import RevenueMonitoring from "../components/Dashboard/AdminElement/RevenueMonitoring";
 import ServiceDetails from "../components/ServiceDetails/ServiceDetails";
 import Services from "../components/Services/Services";
+import MyProfle from "../components/Dashboard/User/MyProfle";
+import MyBooking from "../components/Dashboard/User/MyBooking";
+import PaymentHistory from "../components/Dashboard/User/PaymentHistory";
 
 export const router = createBrowserRouter([
   {
@@ -27,8 +30,8 @@ export const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "signup", element: <Registration /> },
       {
-        path:"services",
-        element:<Services></Services>
+        path: "services",
+        element: <Services></Services>,
       },
       {
         path: "service-details/:id",
@@ -49,6 +52,18 @@ export const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
+      {
+        path: "/dashboard/profile",
+        element: <MyProfle></MyProfle>,
+      },
+      {
+        path: "/dashboard/my-bookings",
+        element: <MyBooking></MyBooking>,
+      },
+      {
+        path: "/dashboard/payment-history",
+        element:<PaymentHistory></PaymentHistory>
+      },
       {
         path: "/dashboard/manage-decorators",
         element: (
