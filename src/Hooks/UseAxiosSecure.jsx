@@ -1,3 +1,4 @@
+// Hooks/UseAxiosSecure.js
 import axios from "axios";
 import { getAuth } from "firebase/auth";
 
@@ -5,28 +6,27 @@ const axiosSecure = axios.create({
   baseURL: "http://localhost:3000",
 });
 
-// Automatically attach token or admin header
 axiosSecure.interceptors.request.use(async (config) => {
-  const adminEmail = localStorage.getItem("adminEmail");
+  const adminToken = localStorage.getItem("adminToken");
 
-  // 1️⃣ If admin is logged in
-  if (adminEmail) {
-    config.headers["x-admin-email"] = adminEmail;
+  if (adminToken) {
+    config.headers["x-admin-token"] = adminToken;
     return config;
   }
 
-  // 2️⃣ Otherwise check Firebase login
   const auth = getAuth();
   const user = auth.currentUser;
 
   if (user) {
-    const token = await user.getIdToken();
-    config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const token = await user.getIdToken();
+      config.headers.Authorization = `Bearer ${token}`;
+    } catch (err) {
+      console.log("Firebase token error");
+    }
   }
 
   return config;
 });
 
-const UseAxiosSecure = () => axiosSecure;
-
-export default UseAxiosSecure;
+export default () => axiosSecure;

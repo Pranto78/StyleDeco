@@ -1,5 +1,5 @@
 // src/components/Dashboard/Dashboard.jsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import UseAuthContext from "../../Hooks/UseAuthContext";
 import {
@@ -18,31 +18,34 @@ import {
   Briefcase,
   CheckSquare,
 } from "lucide-react";
+import UseAxiosSecure from "../../Hooks/UseAxiosSecure";
 
 const Dashboard = () => {
-  const { user, adminEmail, logOut, role: contextRole } = UseAuthContext();
+  const { user, role, logOut } = UseAuthContext(); // ← use role from AuthContext
+  const axiosSecure = UseAxiosSecure();
 
-  // Determine role safely
-  const role = contextRole || (adminEmail ? "admin" : user ? "user" : null);
+  // State to force re-render when decorator role changes
+  const [roleVersion, setRoleVersion] = useState(0);
 
-  // Common logout
-  const handleLogout = () => logOut();
-
-  // Add this useEffect inside Dashboard.jsx
+  // Optional: Keep your decorator polling (unchanged)
   useEffect(() => {
     const interval = setInterval(() => {
-      // Re-check role every 10 seconds when page is open
       axiosSecure.get("/me").then((res) => {
-        if (res.data.role === "decorator") {
-          window.location.reload(); // or better: update state
+        if (res.data.role === "decorator" && role !== "decorator") {
+          setRoleVersion((prev) => prev + 1); // Update UI if decorator role changes
         }
       });
     }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [axiosSecure, role]);
 
-  // USER MENU
+  const handleLogout = () => {
+    localStorage.clear(); // Clear admin role/token
+    logOut();
+  };
+
+  // Menu definitions
   const userMenu = [
     { name: "My Profile", icon: <User size={20} />, to: "/dashboard/profile" },
     {
@@ -57,7 +60,6 @@ const Dashboard = () => {
     },
   ];
 
-  // DECORATOR MENU
   const decoratorMenu = [
     {
       name: "My Assigned Projects",
@@ -81,7 +83,6 @@ const Dashboard = () => {
     },
   ];
 
-  // ADMIN MENU (Exactly as per your requirement)
   const adminMenu = [
     {
       name: "Manage Decorators",
@@ -126,9 +127,7 @@ const Dashboard = () => {
     <div className="drawer lg:drawer-open">
       <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
 
-      {/* Main Content */}
       <div className="drawer-content flex flex-col">
-        {/* Top Bar */}
         <div className="navbar bg-base-200 border-b px-4">
           <div className="flex-1">
             <label
@@ -148,7 +147,7 @@ const Dashboard = () => {
 
           <div className="flex items-center gap-4">
             <span className="hidden md:block text-sm">
-              {user?.email || adminEmail || "Guest"}
+              {user?.email || localStorage.getItem("adminEmail") || "Guest"}
             </span>
             <button onClick={handleLogout} className="btn btn-ghost btn-sm">
               <LogOut size={18} /> Logout
@@ -156,18 +155,14 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Page Content */}
         <div className="flex-1 p-6 bg-base-100 min-h-screen">
-          <Outlet />{" "}
-          {/* This renders nested routes like /dashboard/my-bookings */}
+          <Outlet />
         </div>
       </div>
 
-      {/* Sidebar */}
       <div className="drawer-side">
         <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
         <ul className="menu p-4 w-64 h-full bg-base-300 text-base-content">
-          {/* Logo / Home */}
           <li className="mb-6">
             <NavLink
               to="/"
@@ -180,7 +175,6 @@ const Dashboard = () => {
 
           <div className="divider"></div>
 
-          {/* Dynamic Menu Based on Role */}
           {menuItems.map((item, idx) => (
             <li key={idx} className="mb-2">
               <NavLink
@@ -199,7 +193,6 @@ const Dashboard = () => {
 
           <div className="divider mt-auto"></div>
 
-          {/* Settings */}
           <li>
             <NavLink
               to="/dashboard/settings"

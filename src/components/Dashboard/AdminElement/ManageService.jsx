@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import ServiceCard from "./ServiceCard";
 
 const ManageService = () => {
   const [serviceData, setServiceData] = useState({
@@ -13,11 +14,31 @@ const ManageService = () => {
     image: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [services, setServices] = useState([]);
+
   const adminEmail = localStorage.getItem("adminEmail");
 
   const handleChange = (e) => {
     setServiceData({ ...serviceData, [e.target.name]: e.target.value });
   };
+
+  // Fetch all services
+  const fetchServices = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("http://localhost:3000/services");
+      setServices(res.data);
+    } catch (err) {
+      toast.error("Failed to load services");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +63,7 @@ const ManageService = () => {
 
       const res = await axios.post("http://localhost:3000/services", payload, {
         headers: {
-          "x-admin-token": localStorage.getItem("adminToken"), // 🔥 FIXED
+          "x-admin-token": localStorage.getItem("adminToken"),
         },
       });
 
@@ -56,6 +77,7 @@ const ManageService = () => {
           description: "",
           image: "",
         });
+        fetchServices();
       }
     } catch (err) {
       console.error(err.response?.data || err);
@@ -63,14 +85,14 @@ const ManageService = () => {
     }
   };
 
-
   return (
-    <div className="min-h-screen p-6 flex justify-center items-start bg-gradient-to-br from-gray-900 to-gray-700">
+    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-900 to-gray-700">
+      {/* ----------------- CREATE NEW SERVICE SECTION ---------------- */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-3xl bg-white/10 backdrop-blur-lg border border-white/20
-        shadow-xl p-8 rounded-2xl"
+        className="w-full max-w-4xl mx-auto bg-white/10 backdrop-blur-lg border 
+        border-white/20 shadow-xl p-8 rounded-2xl mb-16"
       >
         <h2 className="text-3xl font-bold text-white mb-6 text-center">
           Create New Service
@@ -87,8 +109,9 @@ const ManageService = () => {
               name="service_name"
               value={serviceData.service_name}
               onChange={handleChange}
+              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
+              placeholder-gray-300 outline-none"
               placeholder="Royal Wedding Stage Decoration"
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none"
             />
           </div>
 
@@ -99,8 +122,9 @@ const ManageService = () => {
               name="cost"
               value={serviceData.cost}
               onChange={handleChange}
+              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
+              placeholder-gray-300 outline-none"
               placeholder="50000"
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none"
             />
           </div>
 
@@ -125,8 +149,9 @@ const ManageService = () => {
               name="service_category"
               value={serviceData.service_category}
               onChange={handleChange}
+              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
+              placeholder-gray-300 outline-none"
               placeholder="Wedding / Birthday / Corporate"
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none"
             />
           </div>
 
@@ -137,8 +162,9 @@ const ManageService = () => {
               value={serviceData.description}
               onChange={handleChange}
               rows="4"
+              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
+              placeholder-gray-300 outline-none"
               placeholder="A luxurious golden-themed stage setup..."
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none"
             ></textarea>
           </div>
 
@@ -149,8 +175,9 @@ const ManageService = () => {
               name="image"
               value={serviceData.image}
               onChange={handleChange}
+              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
+              placeholder-gray-300 outline-none"
               placeholder="https://ibb.co.com/example"
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 outline-none"
             />
           </div>
 
@@ -158,8 +185,9 @@ const ManageService = () => {
             <div className="col-span-2 flex justify-center">
               <img
                 src={serviceData.image}
-                alt="Preview"
-                className="w-64 h-40 object-cover rounded-xl shadow-lg mt-2 border border-white/30"
+                className="w-64 h-40 object-cover rounded-xl shadow-lg mt-2 
+                border border-white/30"
+                alt="preview"
               />
             </div>
           )}
@@ -167,8 +195,8 @@ const ManageService = () => {
           <div className="col-span-2 mt-4">
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl
-              text-lg font-semibold shadow-lg"
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 
+              rounded-xl text-lg font-semibold shadow-lg"
               type="submit"
             >
               Create Service
@@ -176,6 +204,32 @@ const ManageService = () => {
           </div>
         </form>
       </motion.div>
+
+      {/* ----------------- ALL SERVICES SECTION ---------------- */}
+      <h2 className="text-3xl font-bold text-white text-center mb-6">
+        All Services
+      </h2>
+
+      {loading ? (
+        <div className="text-center text-white">Loading services...</div>
+      ) : services.length === 0 ? (
+        <div className="text-center text-gray-300 text-xl">
+          No services yet. Create one!
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto">
+          <AnimatePresence>
+            {services.map((service) => (
+              <ServiceCard
+                key={service._id}
+                service={service}
+                onUpdate={fetchServices}
+                onDelete={fetchServices}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      )}
     </div>
   );
 };

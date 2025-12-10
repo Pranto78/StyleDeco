@@ -3,61 +3,108 @@ import { Mail, Lock } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
 import UseAuthContext from "../../Hooks/UseAuthContext";
-
+import toast from "react-hot-toast";
 
 const Login = () => {
-  const { signInUser, signInGoogle } = UseAuthContext();
+  const { signInUser, signInGoogle, setAdmin } = UseAuthContext();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [loading, setLoading] = useState(false); // ← Added loading state
 
   const handleLogin = async () => {
+    setLoading(true);
+
     try {
-      // 1. Try admin login
-      const res = await fetch("http://localhost:3000/admin-login", {
+      // ---- Try admin login first ----
+      const adminRes = await fetch("http://localhost:3000/admin-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password: pass }),
       });
 
-      const data = await res.json();
+if (adminRes.ok) {
+  const data = await adminRes.json();
 
-      if (res.ok) {
-        localStorage.setItem("adminToken", data.token);
-        localStorage.setItem("adminEmail", data.email);
-        localStorage.setItem("adminRole", "admin");
+  // Update React state immediately
+  setAdmin(email, data.token);
 
-        // This triggers the useEffect in AuthProvider
-        window.dispatchEvent(new Event("admin-logged-in"));
+  toast.success("Admin logged in!");
+  navigate("/dashboard");
+  return; // stops further login
+}
 
-        navigate("/dashboard"); // or "/" → both will work now
-        return;
-      }
-    } catch (err) {
-      console.log("Admin login failed, trying Firebase...");
+    } catch (error) {
+      // Fail silently, move to Firebase login
     }
 
-    // 2. If not admin → Firebase login
+    // ---- Normal Firebase user login ----
     signInUser(email, pass)
-      .then(() => navigate("/"))
-      .catch((err) => console.log(err.message));
+      .then(async (result) => {
+        const user = result.user;
+
+        // Register user to backend
+        await fetch("http://localhost:3000/api/register-user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${await user.getIdToken()}`,
+          },
+          body: JSON.stringify({
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          }),
+        });
+
+        localStorage.setItem("role", "user");
+
+        toast.success("Logged in!");
+        navigate("/");
+      })
+      .catch(() => toast.error("Invalid email or password"))
+      .finally(() => setLoading(false));
   };
 
 
   const handleGoogleLogin = () => {
+    setLoading(true); // ← Start loading for Google too
+
     signInGoogle()
-      .then(() => navigate("/"))
-      .catch((err) => console.log(err.message));
+      .then(async (result) => {
+        const user = result.user;
+
+        await fetch("http://localhost:3000/api/register-user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${await user.getIdToken()}`,
+          },
+          body: JSON.stringify({
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          }),
+        });
+
+        localStorage.setItem("role", "user");
+        toast.success("Logged in with Google! 🎊", {
+          duration: 3000,
+          position: "top-center",
+        });
+
+        navigate("/");
+      })
+      .catch((err) => {
+        toast.error(err.message || "Google login failed");
+      })
+      .finally(() => {
+        setLoading(false); // ← Stop loading
+      });
   };
 
+  //   -------------------------
 
-//   -------------------------
-
-
-
-
-// ---------------------
+  // ---------------------
 
   return (
     <div className="min-h-screen bg-base-200 flex items-center justify-center px-4">
@@ -83,6 +130,7 @@ const Login = () => {
                   className="input input-bordered w-full pl-10"
                   placeholder="Enter your email"
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
                 />
               </div>
 
@@ -95,6 +143,7 @@ const Login = () => {
                   className="input input-bordered w-full pl-10"
                   placeholder="Enter your password"
                   onChange={(e) => setPass(e.target.value)}
+                  disabled={loading}
                 />
               </div>
 
@@ -106,8 +155,16 @@ const Login = () => {
               <button
                 className="btn btn-neutral mt-4 w-full text-base"
                 onClick={handleLogin}
+                disabled={loading}
               >
-                Login
+                {loading ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm"></span>
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
               </button>
 
               {/* Divider */}
@@ -117,9 +174,19 @@ const Login = () => {
               <button
                 className="btn btn-outline w-full flex items-center gap-2"
                 onClick={handleGoogleLogin}
+                disabled={loading}
               >
-                <FcGoogle size={22} />
-                Continue with Google
+                {loading ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm"></span>
+                    Signing in with Google...
+                  </>
+                ) : (
+                  <>
+                    <FcGoogle size={22} />
+                    Continue with Google
+                  </>
+                )}
               </button>
 
               <span className="text-sm pt-2">

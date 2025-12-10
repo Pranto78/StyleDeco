@@ -29,6 +29,23 @@ const AuthProvider = ({ children }) => {
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
+  // Add this function inside AuthProvider
+  const setAdmin = (email, token) => {
+    setUser({
+      email,
+      displayName: "Administrator",
+      photoURL: null,
+    });
+    setRole("admin");
+    setAdminEmail(email);
+
+    localStorage.setItem("adminEmail", email);
+    localStorage.setItem("adminToken", token);
+
+    // Optional: notify other listeners (already have useEffect for it)
+    window.dispatchEvent(new Event("admin-logged-in"));
+  };
+
   const signInUser = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
@@ -121,6 +138,7 @@ const AuthProvider = ({ children }) => {
     updateUserProfile,
     logOut,
     setAdminEmail,
+    setAdmin,
   };
 
   return <AuthContext value={authInfo}>{children}</AuthContext>;

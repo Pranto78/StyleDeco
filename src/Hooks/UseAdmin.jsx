@@ -1,16 +1,18 @@
-import UseAuthContext from "./UseAuthContext";
+// Hooks/UseAdmin.js
 import { useQuery } from "@tanstack/react-query";
 
 const UseAdmin = () => {
-  const { user } = UseAuthContext();
+  const adminEmail = localStorage.getItem("adminEmail");
 
   const { data: isAdmin = false, isLoading } = useQuery({
-    queryKey: ["isAdmin", user?.email],
-    enabled: !!user?.email,
+    queryKey: ["isAdmin"],
     queryFn: async () => {
-      const adminEmail = localStorage.getItem("adminEmail");
-      return !!adminEmail; // true if admin
+      return !!localStorage.getItem("adminEmail"); // Simple check
     },
+    // Run always - no dependency on Firebase user
+    enabled: true,
+    staleTime: Infinity, // Never refetch
+    cacheTime: Infinity,
   });
 
   return [isAdmin, isLoading];

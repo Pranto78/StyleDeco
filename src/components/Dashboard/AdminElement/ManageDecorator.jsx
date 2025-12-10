@@ -1,201 +1,235 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import { Search, UserPlus, ToggleLeft, ToggleRight } from "lucide-react";
+import UseAxiosSecure from "../../../Hooks/UseAxiosSecure";
 
 const ManageDecorator = () => {
-  const [services, setServices] = useState([]);
-  const [editingService, setEditingService] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [specialties, setSpecialties] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const adminToken = localStorage.getItem("adminToken");
+  const axiosSecure = UseAxiosSecure(); // Axios instance
 
-  // Fetch all services
-  const fetchServices = async () => {
+  // Fetch users from backend
+  const fetchUsers = async () => {
+    setLoading(true);
     try {
-      const res = await axios.get("http://localhost:3000/services");
-      setServices(res.data);
+      const res = await axiosSecure.get("/admin/users", { params: { search } });
+      setUsers(res.data.users || []);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to load services");
+      toast.error("Failed to fetch users");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchServices();
-  }, []);
+    fetchUsers();
+  }, [search]);
 
-  // Delete service
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this service?")) return;
+  // Open modal to make user a decorator
+  const makeDecorator = (email) => {
+    const user = users.find((u) => u.email === email);
+    setSelectedUser(user);
+    setSpecialties(user.specialties?.join(", ") || "");
+    setIsModalOpen(true);
+  };
+
+  // Confirm making decorator
+  const confirmMakeDecorator = async () => {
+    if (!specialties.trim()) {
+      toast.error("Please add at least one specialty");
+      return;
+    }
 
     try {
-      const res = await axios.delete(`http://localhost:3000/services/${id}`, {
-        headers: { "x-admin-token": adminToken },
-      });
+      const res = await axiosSecure.patch(
+        `/admin/users/${selectedUser.email}/make-decorator`,
+        { specialties: specialties.split(",").map((s) => s.trim()) }
+      );
 
-      toast.success("Service deleted");
-      fetchServices();
+      toast.success(
+        res.data.message || `${selectedUser.email} is now a decorator`
+      );
+      setIsModalOpen(false);
+      fetchUsers();
     } catch (err) {
       console.error(err);
-      toast.error("Failed to delete");
+      toast.error("Failed to promote user");
     }
   };
 
-  // Update submit
-  const handleUpdateSubmit = async (e) => {
-    e.preventDefault();
-
+  // Toggle decorator active/inactive
+  const toggleActive = async (email) => {
     try {
-      await axios.patch(
-        `http://localhost:3000/services/${editingService._id}`,
-        editingService,
-        {
-          headers: { "x-admin-token": adminToken },
-        }
-      );
-
-      toast.success("Service updated successfully");
-      setEditingService(null);
-      fetchServices();
+      await axiosSecure.patch(`/admin/users/${email}/toggle-active`);
+      fetchUsers();
     } catch (err) {
       console.error(err);
-      toast.error("Update failed");
+      toast.error("Failed to toggle status");
     }
   };
 
   return (
-    <div className="p-8 min-h-screen bg-gray-900 text-white">
-      <h2 className="text-3xl font-bold mb-6">Manage All Services</h2>
+    <div className="p-6 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold mb-8 text-center">Manage Decorators</h1>
 
-      {/* SERVICE LIST */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {services.map((s) => (
-          <motion.div
-            key={s._id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white/10 backdrop-blur-lg p-4 rounded-xl border border-gray-700"
-          >
-            <img
-              src={s.image}
-              className="h-40 w-full object-cover rounded-lg"
-              alt=""
-            />
-
-            <h3 className="text-xl font-bold mt-3">{s.service_name}</h3>
-            <p className="text-gray-300">{s.service_category}</p>
-            <p className="font-semibold mt-2">
-              Tk {s.cost} / {s.unit}
-            </p>
-
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={() => setEditingService(s)}
-                className="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-500"
-              >
-                Update
-              </button>
-
-              <button
-                onClick={() => handleDelete(s._id)}
-                className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-500"
-              >
-                Delete
-              </button>
-            </div>
-          </motion.div>
-        ))}
+      {/* Search */}
+      <div className="flex gap-4 mb-6 max-w-md mx-auto">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            className="input input-bordered w-full pl-10"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
       </div>
 
-      {/* UPDATE MODAL */}
-      {editingService && (
-        <div className="fixed inset-0 bg-black/70 flex justify-center items-center p-6">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-gray-800 w-full max-w-xl p-6 rounded-2xl"
-          >
-            <h2 className="text-2xl font-bold mb-4">Update Service</h2>
+      {/* Users Table */}
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      ) : (
+        <div className="overflow-x-auto shadow-xl rounded-lg">
+          <table className="table table-zebra w-full">
+            <thead className="bg-base-300">
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Specialties</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-10 text-gray-500">
+                    No users found
+                  </td>
+                </tr>
+              ) : (
+                users.map((user) => (
+                  <tr key={user._id} className="hover">
+                    <td>
+                      <div className="avatar">
+                        <div className="w-12 rounded-full">
+                          <img
+                            src={
+                              user.photoURL ||
+                              "https://i.ibb.co/4pB1q7q/user.png"
+                            }
+                            alt="user"
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="font-medium">{user.displayName || "N/A"}</td>
+                    <td>{user.email}</td>
+                    <td>
+                      <span
+                        className={`badge ${
+                          user.role === "decorator"
+                            ? "badge-success"
+                            : "badge-ghost"
+                        }`}
+                      >
+                        {user.role.toUpperCase()}
+                      </span>
+                    </td>
+                    <td>
+                      {user.specialties?.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {user.specialties.map((s, i) => (
+                            <span
+                              key={i}
+                              className="badge badge-sm badge-outline"
+                            >
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td>
+                      {user.role === "decorator" && (
+                        <button
+                          onClick={() => toggleActive(user.email)}
+                          className="btn btn-xs"
+                        >
+                          {user.isActive ? (
+                            <>
+                              <ToggleRight className="text-success" /> Active
+                            </>
+                          ) : (
+                            <>
+                              <ToggleLeft className="text-error" /> Inactive
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </td>
+                    <td>
+                      {user.role !== "decorator" ? (
+                        <button
+                          onClick={() => makeDecorator(user.email)}
+                          className="btn btn-sm btn-success flex items-center gap-1"
+                        >
+                          <UserPlus size={16} /> Make Decorator
+                        </button>
+                      ) : (
+                        <span className="text-success font-medium">
+                          Decorator
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-            <form onSubmit={handleUpdateSubmit} className="space-y-4">
-              <input
-                type="text"
-                className="w-full p-3 bg-gray-700 rounded-lg"
-                value={editingService.service_name}
-                onChange={(e) =>
-                  setEditingService({
-                    ...editingService,
-                    service_name: e.target.value,
-                  })
-                }
-              />
-
-              <input
-                type="number"
-                className="w-full p-3 bg-gray-700 rounded-lg"
-                value={editingService.cost}
-                onChange={(e) =>
-                  setEditingService({
-                    ...editingService,
-                    cost: Number(e.target.value),
-                  })
-                }
-              />
-
-              <input
-                type="text"
-                className="w-full p-3 bg-gray-700 rounded-lg"
-                value={editingService.service_category}
-                onChange={(e) =>
-                  setEditingService({
-                    ...editingService,
-                    service_category: e.target.value,
-                  })
-                }
-              />
-
-              <textarea
-                className="w-full p-3 bg-gray-700 rounded-lg"
-                rows="4"
-                value={editingService.description}
-                onChange={(e) =>
-                  setEditingService({
-                    ...editingService,
-                    description: e.target.value,
-                  })
-                }
-              />
-
-              <input
-                type="text"
-                className="w-full p-3 bg-gray-700 rounded-lg"
-                value={editingService.image}
-                onChange={(e) =>
-                  setEditingService({
-                    ...editingService,
-                    image: e.target.value,
-                  })
-                }
-              />
-
-              <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => setEditingService(null)}
-                  className="bg-gray-600 px-4 py-2 rounded-lg"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="bg-green-600 px-4 py-2 rounded-lg"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </motion.div>
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">
+              Make {selectedUser?.displayName} a Decorator
+            </h3>
+            <p className="py-4">Enter specialties (comma separated)</p>
+            <input
+              type="text"
+              placeholder="home, wedding, office, birthday..."
+              className="input input-bordered w-full"
+              value={specialties}
+              onChange={(e) => setSpecialties(e.target.value)}
+            />
+            <div className="modal-action">
+              <button
+                onClick={confirmMakeDecorator}
+                className="btn btn-success"
+              >
+                Confirm
+              </button>
+              <button onClick={() => setIsModalOpen(false)} className="btn">
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
