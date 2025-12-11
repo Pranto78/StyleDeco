@@ -21,6 +21,8 @@ import {
 import UseAxiosSecure from "../../Hooks/UseAxiosSecure";
 import StarField from "../Bg/StarField";
 
+import decologo from '../../assets/yyy.png'
+
 const Dashboard = () => {
   const { user, role, logOut } = UseAuthContext();
   const axiosSecure = UseAxiosSecure();
@@ -128,7 +130,7 @@ const Dashboard = () => {
       <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
 
       <div className="drawer-content flex flex-col">
-        {/* 🔹 CHANGED bg-base-200 → bg-transparent */}
+        {/* Navbar */}
         <div className="navbar bg-transparent border-b px-4">
           <div className="flex-1">
             <label
@@ -137,7 +139,7 @@ const Dashboard = () => {
             >
               <Menu size={24} />
             </label>
-            <h2 className="text-xl font-bold">
+            <h2 className="text-xl text-primary-gradient font-bold">
               {role === "admin"
                 ? "Admin Dashboard"
                 : role === "decorator"
@@ -146,34 +148,51 @@ const Dashboard = () => {
             </h2>
           </div>
 
+          {/* User Avatar and Logout */}
           <div className="flex items-center gap-4">
-            <span className="hidden md:block text-sm">
-              {user?.email || localStorage.getItem("adminEmail") || "Guest"}
-            </span>
-            <button onClick={handleLogout} className="btn btn-ghost btn-sm">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/30">
+              {user?.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt="User Avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-600 text-white font-bold">
+                  {user?.email?.charAt(0).toUpperCase() || "G"}
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="btn btn-primary-gradient btn-sm flex items-center gap-1"
+            >
               <LogOut size={18} /> Logout
             </button>
           </div>
         </div>
 
-        {/* 🔹 CHANGED bg-base-100 → bg-transparent */}
+        {/* Outlet */}
         <div className="flex-1 p-6 bg-transparent min-h-screen">
           <Outlet />
         </div>
       </div>
 
+      {/* Drawer Side */}
       <div className="drawer-side">
         <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
 
-        {/* 🔹 CHANGED bg-base-300 → bg-transparent */}
         <ul className="menu p-4 w-64 h-full bg-transparent text-base-content">
           <li className="mb-6">
             <NavLink
               to="/"
               className="flex items-center gap-3 text-xl font-bold"
             >
-              <Home size={24} />
-              <span className="hidden lg:block">StyleDecor</span>
+              <div className="flex items-center justify-center">
+                <img src={decologo} className="h-12 w-12" alt="" />
+                <span className="text-primary-gradient">StyleDecor</span>
+              </div>
             </NavLink>
           </li>
 
@@ -185,7 +204,9 @@ const Dashboard = () => {
                 to={item.to}
                 className={({ isActive }) =>
                   `flex items-center gap-3 ${
-                    isActive ? "bg-primary text-white" : "hover:bg-base-200"
+                    isActive
+                      ? "bg-primary-gradient text-white"
+                      : "hover:bg-base-200"
                   }`
                 }
               >

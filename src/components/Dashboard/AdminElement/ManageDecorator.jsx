@@ -92,7 +92,9 @@ const ManageDecorator = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8 text-center">Manage Decorators</h1>
+      <h1 className="text-3xl text-primary-gradient font-bold mb-8 text-center p-4">
+        Manage Decorators
+      </h1>
 
       {/* Search */}
       <div className="flex gap-4 mb-6 max-w-md mx-auto">
@@ -110,8 +112,8 @@ const ManageDecorator = () => {
 
       {/* Users Table */}
       {loading ? (
-        <div className="flex justify-center py-20">
-          <span className="loading loading-spinner loading-lg"></span>
+        <div className="flex items-center justify-center min-h-screen bg-transparent bg-opacity-20">
+          <span className="loading loading-infinity loading-xl text-6xl text-blue-500"></span>
         </div>
       ) : (
         <div className="overflow-x-auto shadow-xl rounded-lg">

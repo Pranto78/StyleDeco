@@ -113,7 +113,12 @@ const RevenueMonitoring = () => {
     },
   };
 
-  if (loading) return <p className="text-white">Loading revenue...</p>;
+   if (loading)
+     return (
+       <div className="flex items-center justify-center min-h-screen bg-transparent bg-opacity-20">
+         <span className="loading loading-infinity loading-xl text-6xl text-blue-500"></span>
+       </div>
+     );
 
   return (
     <div className="p-4 bg-gray-900 rounded-lg shadow-lg w-full">

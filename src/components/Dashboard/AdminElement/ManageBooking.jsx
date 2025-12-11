@@ -59,7 +59,7 @@ const ManageBooking = () => {
       transition={{ duration: 0.5 }}
       className="p-4 sm:p-8"
     >
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-white">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-primary-gradient">
         Manage All Bookings
       </h2>
 

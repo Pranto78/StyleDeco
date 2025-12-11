@@ -102,105 +102,123 @@ const ManageService = () => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
+          {/* Service Name */}
           <div className="col-span-2">
-            <label className="text-white">Service Name</label>
+            <label className="text-gray-200 font-medium">Service Name</label>
             <input
               type="text"
               name="service_name"
               value={serviceData.service_name}
               onChange={handleChange}
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
-              placeholder-gray-300 outline-none"
+              className="w-full mt-1 p-3 rounded-xl bg-gray-800/60 text-white placeholder-gray-400 outline-none
+                         shadow-inner focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
               placeholder="Royal Wedding Stage Decoration"
             />
           </div>
 
+          {/* Cost */}
           <div>
-            <label className="text-white">Cost (Tk)</label>
+            <label className="text-gray-200 font-medium">Cost (Tk)</label>
             <input
               type="number"
               name="cost"
               value={serviceData.cost}
               onChange={handleChange}
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
-              placeholder-gray-300 outline-none"
+              className="w-full mt-1 p-3 rounded-xl bg-gray-800/60 text-white placeholder-gray-400 outline-none
+                         shadow-inner focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
               placeholder="50000"
             />
           </div>
 
+          {/* Unit */}
           <div>
-            <label className="text-white">Unit</label>
+            <label className="text-gray-200 font-medium">Unit</label>
             <select
               name="unit"
               value={serviceData.unit}
               onChange={handleChange}
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white outline-none"
+              className="w-full mt-1 p-3 rounded-xl bg-gray-800 text-white
+               placeholder-gray-400 outline-none shadow-inner 
+               focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
+               transition-all duration-300"
             >
-              <option value="per event">Per Event</option>
-              <option value="per hour">Per Hour</option>
-              <option value="daily">Daily</option>
+              <option className="bg-gray-800 text-white" value="per event">
+                Per Event
+              </option>
+              <option className="bg-gray-800 text-white" value="per hour">
+                Per Hour
+              </option>
+              <option className="bg-gray-800 text-white" value="daily">
+                Daily
+              </option>
             </select>
           </div>
 
+          {/* Service Category */}
           <div className="col-span-2">
-            <label className="text-white">Service Category</label>
+            <label className="text-gray-200 font-medium">
+              Service Category
+            </label>
             <input
               type="text"
               name="service_category"
               value={serviceData.service_category}
               onChange={handleChange}
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
-              placeholder-gray-300 outline-none"
+              className="w-full mt-1 p-3 rounded-xl bg-gray-800/60 text-white placeholder-gray-400 outline-none
+                         shadow-inner focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
               placeholder="Wedding / Birthday / Corporate"
             />
           </div>
 
+          {/* Description */}
           <div className="col-span-2">
-            <label className="text-white">Description</label>
+            <label className="text-gray-200 font-medium">Description</label>
             <textarea
               name="description"
               value={serviceData.description}
               onChange={handleChange}
               rows="4"
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
-              placeholder-gray-300 outline-none"
+              className="w-full mt-1 p-3 rounded-xl bg-gray-800/60 text-white placeholder-gray-400 outline-none
+                         shadow-inner focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
               placeholder="A luxurious golden-themed stage setup..."
             ></textarea>
           </div>
 
+          {/* Image URL */}
           <div className="col-span-2">
-            <label className="text-white">Image URL</label>
+            <label className="text-gray-200 font-medium">Image URL</label>
             <input
               type="text"
               name="image"
               value={serviceData.image}
               onChange={handleChange}
-              className="w-full mt-1 p-3 rounded-lg bg-white/20 text-white 
-              placeholder-gray-300 outline-none"
+              className="w-full mt-1 p-3 rounded-xl bg-gray-800/60 text-white placeholder-gray-400 outline-none
+                         shadow-inner focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300"
               placeholder="https://ibb.co.com/example"
             />
           </div>
 
+          {/* Image Preview */}
           {serviceData.image && (
             <div className="col-span-2 flex justify-center">
               <img
                 src={serviceData.image}
-                className="w-64 h-40 object-cover rounded-xl shadow-lg mt-2 
-                border border-white/30"
+                className="w-64 h-40 object-cover rounded-2xl shadow-lg mt-2 border border-white/30
+                           transition-transform duration-300 hover:scale-105"
                 alt="preview"
               />
             </div>
           )}
 
+          {/* Create Button */}
           <div className="col-span-2 mt-4">
             <motion.button
               whileTap={{ scale: 0.95 }}
               whileHover={{
                 scale: 1.05,
-                boxShadow: "0 0 20px rgba(59, 130, 246, 0.6)",
+                boxShadow: "0 0 25px rgba(59, 130, 246, 0.7)",
               }}
-              className="w-full btn-primary-gradient text-white py-3 
-             rounded-xl text-lg font-semibold shadow-lg"
+              className="w-full btn-primary-gradient text-white py-3 rounded-2xl text-lg font-semibold shadow-lg transition-all duration-300"
               type="submit"
             >
               Create Service
@@ -215,7 +233,9 @@ const ManageService = () => {
       </h2>
 
       {loading ? (
-        <div className="text-center text-white">Loading services...</div>
+        <div className="flex items-center justify-center min-h-screen bg-transparent bg-opacity-20">
+          <span className="loading loading-infinity loading-xl text-6xl text-blue-500"></span>
+        </div>
       ) : services.length === 0 ? (
         <div className="text-center text-gray-300 text-xl">
           No services yet. Create one!
