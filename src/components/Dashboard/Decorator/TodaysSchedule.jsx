@@ -31,15 +31,15 @@ const TodaysSchedule = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen text-white">
-        Loading today's schedule...
+      <div className="flex items-center justify-center min-h-screen bg-transparent bg-opacity-20">
+        <span className="loading loading-infinity loading-xl text-6xl text-blue-500"></span>
       </div>
     );
   }
 
   return (
-    <div className="p-8 min-h-screen bg-gradient-to-r from-[#0d0b1f] to-[#1a0f3d] text-white">
-      <h2 className="text-4xl font-bold mb-12 text-center text-purple-400 tracking-wide">
+    <div className="p-8 min-h-screen bg-transparent text-white">
+      <h2 className="text-4xl font-bold mb-12 text-center text-primary-gradient tracking-wide">
         Today's Schedule
       </h2>
 

@@ -55,10 +55,8 @@ const EarningSummary = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-2xl font-medium text-blue-400 animate-pulse">
-          Loading earnings...
-        </div>
+      <div className="flex items-center justify-center min-h-screen bg-transparent bg-opacity-20">
+        <span className="loading loading-infinity loading-xl text-6xl text-blue-500"></span>
       </div>
     );
   }

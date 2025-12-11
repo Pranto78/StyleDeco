@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import UseAxiosSecure from "../../Hooks/UseAxiosSecure";
-// import UseAxiosSecure from "../hooks/UseAxiosSecure";
 
 const FeaturedService = () => {
   const [services, setServices] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
   const axiosSecure = UseAxiosSecure();
+  const containerRef = useRef(null);
+
+  const cardsPerPageDesktop = 3; // 3 cards per page for desktop
+  const cardsPerPageTablet = 2; // 2 cards per page for tablet
+  const cardsPerPageMobile = 1; // 1 card per page for mobile
+
+  const [cardsPerPage, setCardsPerPage] = useState(cardsPerPageDesktop);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -17,33 +24,58 @@ const FeaturedService = () => {
         console.error("Failed to fetch services:", err.response || err);
       }
     };
-
     fetchServices();
+
+    // Responsive logic
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setCardsPerPage(cardsPerPageMobile);
+      } else if (window.innerWidth < 1024) {
+        setCardsPerPage(cardsPerPageTablet);
+      } else {
+        setCardsPerPage(cardsPerPageDesktop);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [axiosSecure]);
+
+  const totalPages = Math.ceil(services.length / cardsPerPage);
+
+  const goToPage = (pageIndex) => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    const scrollAmount = (container.scrollWidth / totalPages) * pageIndex;
+    container.scrollTo({ left: scrollAmount, behavior: "smooth" });
+    setCurrentPage(pageIndex);
+  };
 
   return (
     <div className="max-w-7xl mx-auto my-20 px-5">
-      {/* Heading */}
       <motion.h2
         initial={{ opacity: 0, y: -30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         className="text-4xl text-primary-gradient font-bold text-center mb-10"
       >
-        Featured <span className="">Services</span>
+        Featured Services
       </motion.h2>
 
-      {/* GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Horizontal scroll container */}
+      <div
+        ref={containerRef}
+        className="flex gap-8 overflow-x-hidden snap-x snap-mandatory scrollbar-none"
+      >
         {services.map((service) => (
           <motion.div
             key={service._id}
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="bg-secondary-gradient rounded-2xl shadow-lg p-5 hover:shadow-2xl duration-300"
+            className="flex-shrink-0 w-[350px] sm:w-[45%] md:w-[30%] snap-start bg-secondary-gradient rounded-2xl shadow-lg p-5 hover:shadow-2xl duration-300"
           >
-            {/* Image */}
             <div className="w-full h-56 overflow-hidden rounded-xl mb-4">
               <img
                 src={service.image}
@@ -78,6 +110,23 @@ const FeaturedService = () => {
           </motion.div>
         ))}
       </div>
+
+      {/* Pagination Dots */}
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-6 gap-3">
+          {Array.from({ length: totalPages }).map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => goToPage(idx)}
+              className={`w-4 h-4 rounded-full transition-colors ${
+                currentPage === idx
+                  ? "bg-primary-gradient"
+                  : "bg-gray-400 hover:bg-primary"
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
