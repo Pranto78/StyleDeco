@@ -43,7 +43,7 @@ const AssignDecorator = () => {
 
   const handleAssign = async (decoratorEmail) => {
     try {
-      await axiosSecure().post("/admin/assign-decorator", {
+      await axiosSecure.post("/admin/assign-decorator", {
         email: decoratorEmail,
         bookingId: selectedBooking._id,
       });
