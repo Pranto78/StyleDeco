@@ -39,7 +39,14 @@
 
 
 .text-primary-gradient {
-    background: var(--btn-primary-gradient);
+background: linear-gradient(90deg,
+            #577ce4,
+            /* deep navy blue */
+            #3264d1,
+            /* vivid blue (blue-600) */
+            #25bbbb
+            /* bright blue (blue-500) for highlight */
+        );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -54,3 +61,7 @@
 .bg-secondary-gradient {
     background: var(--btn-secondary-gradient);
 }
+
+
+
+/* ============================== */

@@ -201,12 +201,12 @@ const ManageDecorator = () => {
                       {user.role !== "decorator" ? (
                         <button
                           onClick={() => makeDecorator(user.email)}
-                          className="btn btn-sm btn-success flex items-center gap-1"
+                          className="btn btn-sm btn-primary-gradient flex items-center gap-1 rounded-2xl"
                         >
-                          <UserPlus size={16} /> Make Decorator
+                          <UserPlus size={16} /> Decorator
                         </button>
                       ) : (
-                        <span className="text-success font-medium">
+                        <span className="text-primary-gradient font-medium">
                           Decorator
                         </span>
                       )}
@@ -237,7 +237,7 @@ const ManageDecorator = () => {
             <div className="modal-action">
               <button
                 onClick={confirmMakeDecorator}
-                className="btn btn-success"
+                className="btn btn-primary-gradient"
               >
                 Confirm
               </button>

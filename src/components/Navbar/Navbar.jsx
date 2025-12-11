@@ -2,6 +2,7 @@ import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import UseAuthContext from "../../Hooks/UseAuthContext";
 // import UseAuthContext from "../../Hooks/UseAuthContext";
+import decoLogo from '../../assets/yyy.png';
 
 
 // Active link style function
@@ -60,7 +61,7 @@ const Navbar = () => {
   );
 
   return (
-    <div className="navbar bg-base-100 shadow-sm mx-auto px-4">
+    <div className="navbar bg-transparent backdrop-blur-sm shadow-none mx-auto px-4 fixed top-0 left-0 w-full z-50">
       {/* Navbar Start */}
       <div className="navbar-start">
         <div className="dropdown">
@@ -86,9 +87,12 @@ const Navbar = () => {
         </div>
         <Link
           to="/"
-          className="btn btn-ghost font-bold text-primary-gradient text-2xl"
+          className="btn flex items-center justify-center btn-ghost font-bold text-primary-gradient text-2xl"
         >
-          StyleDecor
+          <div className="mt-2">
+            <img src={decoLogo} className="h-14 w-15 object-contain" alt="" />
+          </div>
+          <div className="">StyleDecor</div>
         </Link>
       </div>
 

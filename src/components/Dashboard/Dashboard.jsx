@@ -19,20 +19,19 @@ import {
   CheckSquare,
 } from "lucide-react";
 import UseAxiosSecure from "../../Hooks/UseAxiosSecure";
+import StarField from "../Bg/StarField";
 
 const Dashboard = () => {
-  const { user, role, logOut } = UseAuthContext(); // ← use role from AuthContext
+  const { user, role, logOut } = UseAuthContext();
   const axiosSecure = UseAxiosSecure();
 
-  // State to force re-render when decorator role changes
   const [roleVersion, setRoleVersion] = useState(0);
 
-  // Optional: Keep your decorator polling (unchanged)
   useEffect(() => {
     const interval = setInterval(() => {
       axiosSecure.get("/me").then((res) => {
         if (res.data.role === "decorator" && role !== "decorator") {
-          setRoleVersion((prev) => prev + 1); // Update UI if decorator role changes
+          setRoleVersion((prev) => prev + 1);
         }
       });
     }, 10000);
@@ -41,11 +40,10 @@ const Dashboard = () => {
   }, [axiosSecure, role]);
 
   const handleLogout = () => {
-    localStorage.clear(); // Clear admin role/token
+    localStorage.clear();
     logOut();
   };
 
-  // Menu definitions
   const userMenu = [
     { name: "My Profile", icon: <User size={20} />, to: "/dashboard/profile" },
     {
@@ -125,10 +123,13 @@ const Dashboard = () => {
 
   return (
     <div className="drawer lg:drawer-open">
+      <StarField />
+
       <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
 
       <div className="drawer-content flex flex-col">
-        <div className="navbar bg-base-200 border-b px-4">
+        {/* 🔹 CHANGED bg-base-200 → bg-transparent */}
+        <div className="navbar bg-transparent border-b px-4">
           <div className="flex-1">
             <label
               htmlFor="dashboard-drawer"
@@ -155,14 +156,17 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="flex-1 p-6 bg-base-100 min-h-screen">
+        {/* 🔹 CHANGED bg-base-100 → bg-transparent */}
+        <div className="flex-1 p-6 bg-transparent min-h-screen">
           <Outlet />
         </div>
       </div>
 
       <div className="drawer-side">
         <label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
-        <ul className="menu p-4 w-64 h-full bg-base-300 text-base-content">
+
+        {/* 🔹 CHANGED bg-base-300 → bg-transparent */}
+        <ul className="menu p-4 w-64 h-full bg-transparent text-base-content">
           <li className="mb-6">
             <NavLink
               to="/"

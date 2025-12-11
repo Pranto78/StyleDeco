@@ -76,7 +76,7 @@ const ServiceCard = ({ service, onUpdate, onDelete }) => {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
-      className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl 
+      className="bg-transparent-md backdrop-blur-lg border border-white/20 rounded-2xl 
       shadow-xl overflow-hidden flex flex-col h-full"
     >
       {/* ------------------- EDIT MODE ------------------- */}
@@ -181,19 +181,25 @@ const ServiceCard = ({ service, onUpdate, onDelete }) => {
             </div>
 
             <div className="flex gap-2">
-              <button
+              {/* ------------------- EDIT BUTTON ------------------- */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setIsEditing(true)}
-                className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black py-2 rounded-lg font-semibold"
+                className="flex-1 btn-primary-gradient text-white py-2 rounded-lg font-semibold shadow-lg"
               >
                 Edit
-              </button>
+              </motion.button>
 
-              <button
+              {/* ------------------- DELETE BUTTON ------------------- */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleDeleteToast}
-                className="flex-1 bg-red-600 hover:bg-red-500 text-white py-2 rounded-lg font-semibold"
+                className="flex-1 bg-gradient-to-r from-red-600 via-red-500 to-red-400 text-white py-2 rounded-lg font-semibold shadow-lg"
               >
                 Delete
-              </button>
+              </motion.button>
             </div>
           </div>
         </>

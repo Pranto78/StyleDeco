@@ -86,15 +86,15 @@ const ManageService = () => {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-gray-900 to-gray-700">
+    <div className="min-h-screen p-6 bg-transparent">
       {/* ----------------- CREATE NEW SERVICE SECTION ---------------- */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-4xl mx-auto bg-white/10 backdrop-blur-lg border 
-        border-white/20 shadow-xl p-8 rounded-2xl mb-16"
+        className="w-full max-w-4xl mx-auto bg-transparent backdrop-blur-lg border 
+        border-white/30 shadow-xl p-8 rounded-2xl mb-16"
       >
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">
+        <h2 className="text-3xl font-bold text-primary-gradient mb-6 text-center">
           Create New Service
         </h2>
 
@@ -195,8 +195,12 @@ const ManageService = () => {
           <div className="col-span-2 mt-4">
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 
-              rounded-xl text-lg font-semibold shadow-lg"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 0 20px rgba(59, 130, 246, 0.6)",
+              }}
+              className="w-full btn-primary-gradient text-white py-3 
+             rounded-xl text-lg font-semibold shadow-lg"
               type="submit"
             >
               Create Service
@@ -206,7 +210,7 @@ const ManageService = () => {
       </motion.div>
 
       {/* ----------------- ALL SERVICES SECTION ---------------- */}
-      <h2 className="text-3xl font-bold text-white text-center mb-6">
+      <h2 className="text-3xl font-bold text-primary-gradient text-center mb-6">
         All Services
       </h2>
 

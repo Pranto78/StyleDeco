@@ -58,29 +58,71 @@ const RevenueMonitoring = () => {
         label: "Revenue (BDT)",
         data: Object.values(revenueData),
         borderColor: "rgba(37, 99, 235, 1)",
-        backgroundColor: "rgba(37, 99, 235, 0.3)",
+        backgroundColor: (context) => {
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return "rgba(37, 99, 235, 0.3)";
+          const gradient = ctx.createLinearGradient(
+            0,
+            chartArea.bottom,
+            0,
+            chartArea.top
+          );
+          gradient.addColorStop(0, "rgba(37, 99, 235, 0.1)");
+          gradient.addColorStop(1, "rgba(37, 99, 235, 0.4)");
+          return gradient;
+        },
         tension: 0.4, // smooth curve
         fill: true,
+        pointRadius: 5,
+        pointHoverRadius: 7,
       },
     ],
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Revenue Monitoring" },
+      legend: {
+        position: "top",
+        labels: { color: "#ffffff", font: { size: 12 } },
+      },
+      title: {
+        display: true,
+        text: "Revenue Monitoring",
+        color: "#ffffff",
+        font: { size: 18, weight: "600" },
+      },
+      tooltip: {
+        bodyColor: "#ffffff",
+        titleColor: "#ffffff",
+        backgroundColor: "rgba(0,0,0,0.8)",
+      },
+    },
+    scales: {
+      x: {
+        ticks: { color: "#ffffff", font: { size: 12 } },
+        grid: { color: "rgba(255,255,255,0.1)" },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: { color: "#ffffff", font: { size: 12 } },
+        grid: { color: "rgba(255,255,255,0.1)" },
+      },
     },
   };
 
-  if (loading) return <p>Loading revenue...</p>;
+  if (loading) return <p className="text-white">Loading revenue...</p>;
 
   return (
-    <div className="p-4 bg-gray-300 rounded-lg shadow">
+    <div className="p-4 bg-gray-900 rounded-lg shadow-lg w-full">
       {payments.length === 0 ? (
-        <p>No payments found yet.</p>
+        <p className="text-white">No payments found yet.</p>
       ) : (
-        <Line data={chartData} options={options} />
+        <div style={{ width: "100%", minHeight: "350px" }}>
+          <Line data={chartData} options={options} />
+        </div>
       )}
     </div>
   );

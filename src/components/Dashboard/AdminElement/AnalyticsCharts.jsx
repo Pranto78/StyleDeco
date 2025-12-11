@@ -57,30 +57,70 @@ const AnalyticsCharts = () => {
       {
         label: "Number of Services Booked",
         data: Object.values(bookingCount),
-        backgroundColor: "rgba(99, 102, 241, 0.7)",
+        backgroundColor: (context) => {
+          // Gradient effect for bars
+          const chart = context.chart;
+          const { ctx, chartArea } = chart;
+          if (!chartArea) return "rgba(99, 102, 241, 0.7)";
+          const gradient = ctx.createLinearGradient(
+            0,
+            chartArea.bottom,
+            0,
+            chartArea.top
+          );
+          gradient.addColorStop(0, "rgba(99, 102, 241, 0.7)");
+          gradient.addColorStop(1, "rgba(139, 92, 246, 0.9)");
+          return gradient;
+        },
+        borderRadius: 6, // Rounded bars
+        barPercentage: 0.6, // Thinner bars for mobile
       },
     ],
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Full responsiveness
     plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "Histogram: Services Booked by Users" },
+      legend: {
+        position: "top",
+        labels: { color: "#ffffff" }, // White legend for dark theme
+      },
+      title: {
+        display: true,
+        text: "Services Booked by Users",
+        color: "#ffffff", // White title for dark theme
+        font: { size: 18, weight: "600" },
+      },
+      tooltip: {
+        bodyColor: "#ffffff",
+        titleColor: "#ffffff",
+        backgroundColor: "rgba(0,0,0,0.8)",
+      },
     },
     scales: {
-      y: { beginAtZero: true, ticks: { stepSize: 1 } },
+      x: {
+        ticks: { color: "#ffffff", font: { size: 12 } },
+        grid: { color: "rgba(255,255,255,0.1)" },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: { stepSize: 1, color: "#ffffff", font: { size: 12 } },
+        grid: { color: "rgba(255,255,255,0.1)" },
+      },
     },
   };
 
-  if (loading) return <p>Loading chart...</p>;
+  if (loading) return <p className="text-white">Loading chart...</p>;
 
   return (
-    <div className="p-4 bg-gray-200 rounded-lg shadow">
+    <div className="p-4 bg-gray-900 rounded-lg shadow-lg w-full">
       {bookings.length === 0 ? (
-        <p>No booking data found.</p>
+        <p className="text-white">No booking data found.</p>
       ) : (
-        <Bar data={chartData} options={options} />
+        <div style={{ width: "100%", minHeight: "350px" }}>
+          <Bar data={chartData} options={options} />
+        </div>
       )}
     </div>
   );
