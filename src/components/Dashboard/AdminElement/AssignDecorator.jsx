@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
 import toast from "react-hot-toast";
+// import UseAxiosSecure from "../../Hooks/UseAxiosSecure";
+import AssignDecoratorModal from "./AssignDecoratorModal"; // modal component we'll create
+import UseAxiosSecure from "../../../Hooks/UseAxiosSecure";
 
 const AssignDecorator = () => {
+  const axiosSecure = UseAxiosSecure();
   const [paidUsers, setPaidUsers] = useState([]);
-  const adminToken = localStorage.getItem("adminToken");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   // Fetch paid bookings/users
   const fetchPaidUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/admin/bookings", {
-        headers: { "x-admin-token": adminToken },
-      });
-
-      // Filter only paid users
+      const res = await axiosSecure.get("/admin/bookings");
+      // filter paid
       const paid = res.data.filter((b) => b.status === "paid");
       setPaidUsers(paid);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to fetch paid bookings");
     }
   };
@@ -26,37 +27,44 @@ const AssignDecorator = () => {
   useEffect(() => {
     fetchPaidUsers(); // initial fetch
 
-    // Poll every 5 seconds
-    const interval = setInterval(() => {
-      fetchPaidUsers();
-    }, 5000);
-
-    // Cleanup on unmount
+    const interval = setInterval(fetchPaidUsers, 5000); // auto refresh every 5s
     return () => clearInterval(interval);
   }, []);
 
- const assignDecorator = async (userEmail, bookingId) => {
-   try {
-     await axios.post(
-       "http://localhost:3000/admin/assign-decorator",
-       { email: userEmail, bookingId },
-       { headers: { "x-admin-token": adminToken } }
-     );
+  const openModal = (booking) => {
+    setSelectedBooking(booking);
+    setModalOpen(true);
+  };
 
-     toast.success(`${userEmail} is now a decorator!`);
+  const closeModal = () => {
+    setSelectedBooking(null);
+    setModalOpen(false);
+  };
 
-     // Optimistically update table
-     setPaidUsers((prev) =>
-       prev.map((u) =>
-         u._id === bookingId ? { ...u, decoratorAssigned: true } : u
-       )
-     );
-   } catch (error) {
-     console.error(error);
-     toast.error("Failed to assign decorator");
-   }
- };
+  const handleAssign = async (decoratorEmail) => {
+    try {
+      await axiosSecure().post("/admin/assign-decorator", {
+        email: decoratorEmail,
+        bookingId: selectedBooking._id,
+      });
 
+      toast.success(
+        `${decoratorEmail} assigned to ${selectedBooking.userEmail}`
+      );
+
+      // Update table optimistically
+      setPaidUsers((prev) =>
+        prev.map((u) =>
+          u._id === selectedBooking._id ? { ...u, decoratorAssigned: true } : u
+        )
+      );
+
+      closeModal();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to assign decorator");
+    }
+  };
 
   return (
     <motion.div
@@ -65,7 +73,7 @@ const AssignDecorator = () => {
       transition={{ duration: 0.5 }}
       className="p-8"
     >
-      <h2 className="text-3xl font-bold mb-6">Assign Decorators</h2>
+      <h2 className="text-3xl font-bold mb-6">Manage Decorators</h2>
 
       <div className="overflow-x-auto bg-gray-900 rounded-xl p-4 shadow-xl">
         <table className="table text-white w-full">
@@ -76,7 +84,7 @@ const AssignDecorator = () => {
               <th>Service</th>
               <th>Cost</th>
               <th>Booking Date</th>
-              <th>Action</th>
+              <th>Decorator</th>
             </tr>
           </thead>
 
@@ -99,11 +107,11 @@ const AssignDecorator = () => {
                 <td>
                   {user.decoratorAssigned ? (
                     <span className="px-3 py-1 rounded-lg bg-green-600 text-white font-bold">
-                      Decorator
+                      Assigned
                     </span>
                   ) : (
                     <button
-                      onClick={() => assignDecorator(user.userEmail, user._id)}
+                      onClick={() => openModal(user)}
                       className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-500"
                     >
                       Assign
@@ -115,6 +123,14 @@ const AssignDecorator = () => {
           </tbody>
         </table>
       </div>
+
+      {modalOpen && (
+        <AssignDecoratorModal
+          booking={selectedBooking}
+          onClose={closeModal}
+          onAssign={handleAssign}
+        />
+      )}
     </motion.div>
   );
 };

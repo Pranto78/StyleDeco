@@ -21,6 +21,11 @@ import MyBooking from "../components/Dashboard/User/MyBooking";
 import PaymentHistory from "../components/Dashboard/User/PaymentHistory";
 import PaymentCancel from "../components/Dashboard/User/PaymentCancel";
 import PaymentSuccess from "../components/Dashboard/User/PaymentSuccess";
+import DecoratorRoute from "./DecoratorRoute";
+import MyAssignProject from "../components/Dashboard/Decorator/MyAssignProject";
+import TodaysSchedule from "../components/Dashboard/Decorator/TodaysSchedule";
+import UpdateProjectStatus from "../components/Dashboard/Decorator/UpdateProjectStatus";
+import EarningSummary from "../components/Dashboard/Decorator/EarningSummary";
 
 export const router = createBrowserRouter([
   {
@@ -68,11 +73,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "payment-cancelled",
-        element:<PaymentCancel></PaymentCancel>
+        element: <PaymentCancel></PaymentCancel>,
       },
       {
-        path:"payment-success",
-        element:<PaymentSuccess></PaymentSuccess>
+        path: "payment-success",
+        element: <PaymentSuccess></PaymentSuccess>,
       },
       {
         path: "/dashboard/manage-decorators",
@@ -120,6 +125,38 @@ export const router = createBrowserRouter([
           <AdminRoute>
             <RevenueMonitoring></RevenueMonitoring>
           </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/assigned-projects",
+        element: (
+          <DecoratorRoute>
+            <MyAssignProject></MyAssignProject>
+          </DecoratorRoute>
+        ),
+      },
+      {
+        path: "/dashboard/today-schedule",
+        element: (
+          <DecoratorRoute>
+            <TodaysSchedule></TodaysSchedule>
+          </DecoratorRoute>
+        ),
+      },
+      {
+        path: "/dashboard/update-status",
+        element: (
+          <DecoratorRoute>
+            <UpdateProjectStatus></UpdateProjectStatus>
+          </DecoratorRoute>
+        ),
+      },
+      {
+        path: "/dashboard/earnings",
+        element: (
+          <DecoratorRoute>
+            <EarningSummary></EarningSummary>
+          </DecoratorRoute>
         ),
       },
     ],

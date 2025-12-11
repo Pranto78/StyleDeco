@@ -55,13 +55,29 @@ const ManageDecorator = () => {
       toast.success(
         res.data.message || `${selectedUser.email} is now a decorator`
       );
+
+      // 1️⃣ Update local users state immediately
+      setUsers((prev) =>
+        prev.map((user) =>
+          user.email === selectedUser.email
+            ? {
+                ...user,
+                role: "decorator",
+                specialties: specialties.split(",").map((s) => s.trim()),
+                isActive: true,
+              }
+            : user
+        )
+      );
+
+      // 2️⃣ Close modal
       setIsModalOpen(false);
-      fetchUsers();
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to promote user");
+      console.error(err.response?.data || err);
+      toast.error(err.response?.data?.message || "Failed to promote user");
     }
   };
+
 
   // Toggle decorator active/inactive
   const toggleActive = async (email) => {
