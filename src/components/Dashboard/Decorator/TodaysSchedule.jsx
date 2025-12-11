@@ -39,7 +39,7 @@ const TodaysSchedule = () => {
 
   return (
     <div className="p-8 min-h-screen bg-transparent text-white">
-      <h2 className="text-4xl font-bold mb-12 text-center text-primary-gradient tracking-wide">
+      <h2 className="text-4xl font-bold mb-12 text-center text-blue-400 tracking-wide">
         Today's Schedule
       </h2>
 
@@ -52,26 +52,26 @@ const TodaysSchedule = () => {
           {projects.map((p) => (
             <motion.div
               key={p._id}
-              className="bg-[#181626] p-6 rounded-2xl shadow-xl border border-purple-800/30 flex flex-col justify-between"
+              className="bg-[#181626] p-6 rounded-2xl shadow-xl border border-blue-700/30 flex flex-col justify-between"
               whileHover={{
                 scale: 1.03,
-                boxShadow: "0 15px 35px rgba(139, 92, 246, 0.5)",
+                boxShadow: "0 15px 35px rgba(59, 130, 246, 0.5)", // blue shadow
               }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: "easeOut" }}
             >
               <div className="mb-4">
-                <h3 className="text-2xl font-bold text-purple-300 mb-2">
+                <h3 className="text-2xl font-bold text-blue-400 mb-2">
                   {p.serviceName}
                 </h3>
                 <p className="text-gray-300">
-                  <span className="font-semibold text-pink-400">Client:</span>{" "}
+                  <span className="font-semibold text-blue-300">Client:</span>{" "}
                   {p.userEmail}
                 </p>
                 <p className="text-gray-300 mt-1">
-                  <span className="font-semibold text-yellow-400">Status:</span>{" "}
-                  <span className="font-bold text-yellow-300">
+                  <span className="font-semibold text-blue-400">Status:</span>{" "}
+                  <span className="font-bold text-blue-300">
                     {p.projectStatus || "Assigned"}
                   </span>
                 </p>
@@ -86,7 +86,7 @@ const TodaysSchedule = () => {
                 transition={{ duration: 0.2 }}
               >
                 <select
-                  className="w-full p-3 bg-[#221f36] text-white rounded-xl border border-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                  className="w-full p-3 bg-[#221f36] text-white rounded-xl border border-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   onChange={async (e) => {
                     try {
                       await axiosSecure.patch(

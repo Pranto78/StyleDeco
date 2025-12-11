@@ -6,23 +6,22 @@ const axiosSecure = axios.create({
   baseURL: "http://localhost:3000",
 });
 
+// Hooks/UseAxiosSecure.js
 axiosSecure.interceptors.request.use(async (config) => {
+  // Only add admin token if we are actually logged in as admin
   const adminToken = localStorage.getItem("adminToken");
-
   if (adminToken) {
     config.headers["x-admin-token"] = adminToken;
-    return config;
+    // DO NOT return early — let Firebase token be added too if needed
   }
 
-  const auth = getAuth();
-  const user = auth.currentUser;
-
+  const user = getAuth().currentUser;
   if (user) {
     try {
-      const token = await user.getIdToken();
+      const token = await user.getIdToken(true);
       config.headers.Authorization = `Bearer ${token}`;
     } catch (err) {
-      console.log("Firebase token error");
+      console.error("Token refresh failed:", err);
     }
   }
 

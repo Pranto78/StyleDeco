@@ -20,9 +20,20 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await logOut();
+      await logOut(); // Firebase sign out
+
+      // CRITICAL: Remove admin token so normal users work again!
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminEmail"); // if you save it
+      localStorage.removeItem("role"); // optional cleanup
+
+      toast.success("Logged out successfully!"); // optional
     } catch (err) {
-      console.log(err.message);
+      console.error("Logout error:", err.message);
+      toast.error("Logout failed");
+    } finally {
+      // Optional: redirect to home
+      window.location.href = "/"; // or use navigate()
     }
   };
 

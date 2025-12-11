@@ -89,8 +89,8 @@ const syncUserToBackend = async () => {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center px-4">
-      <div className="hero-content flex-col lg:flex-row shadow-xl rounded-2xl bg-base-100 p-10 gap-12">
+    <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
+      <div className="hero-content flex-col lg:flex-row shadow-xl rounded-2xl bg-transparent-md p-10 gap-12">
         <div className="max-w-md text-center lg:text-left">
           <h1 className="text-5xl font-bold">Create an Account</h1>
           <p className="py-6 text-base-content/70">

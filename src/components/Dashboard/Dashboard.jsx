@@ -22,6 +22,7 @@ import UseAxiosSecure from "../../Hooks/UseAxiosSecure";
 import StarField from "../Bg/StarField";
 
 import decologo from '../../assets/yyy.png'
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const { user, role, logOut } = UseAuthContext();
@@ -41,10 +42,24 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [axiosSecure, role]);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    logOut();
-  };
+ const handleLogout = async () => {
+   try {
+     await logOut(); // Firebase sign out first
+
+     // Only remove what we actually use — safer than clear()
+     localStorage.removeItem("adminToken");
+     localStorage.removeItem("adminEmail");
+     localStorage.removeItem("role");
+
+     toast.success("Logged out successfully!");
+
+     // Optional: redirect to home
+     window.location.href = "/";
+   } catch (err) {
+     console.error("Logout failed:", err);
+     toast.error("Logout failed");
+   }
+ };
 
   const userMenu = [
     { name: "My Profile", icon: <User size={20} />, to: "/dashboard/profile" },

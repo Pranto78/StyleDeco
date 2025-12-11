@@ -88,7 +88,13 @@ const MyProfle = () => {
         btn-primary-gradient hover:btn-primary-gradient-hover 
         transition-all duration-300"
       >
-        {loading ? "Updating..." : "Update Profile"}
+        {loading ? (
+          <div className="flex items-center justify-center min-h-screen bg-transparent bg-opacity-20">
+            <span className="loading loading-infinity loading-xl text-6xl text-blue-500"></span>
+          </div>
+        ) : (
+          "Update Profile"
+        )}
       </motion.button>
     </motion.div>
   );

@@ -13,58 +13,55 @@ const Login = () => {
   const [pass, setPass] = useState("");
   const [loading, setLoading] = useState(false); // ← Added loading state
 
-  const handleLogin = async () => {
-    setLoading(true);
+ const handleLogin = async () => {
+   setLoading(true);
 
-    try {
-      // ---- Try admin login first ----
-      const adminRes = await fetch("http://localhost:3000/admin-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: pass }),
-      });
+   try {
+     const adminRes = await fetch("http://localhost:3000/admin-login", {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({ email, password: pass }),
+     });
 
-if (adminRes.ok) {
-  const data = await adminRes.json();
+     if (adminRes.ok) {
+       const data = await adminRes.json();
+       setAdmin(email, data.token); // saves adminToken
+       toast.success("Welcome back, Admin!");
+       navigate("/dashboard");
+       return;
+     }
+     // If admin fails → make sure we are NOT admin
+     localStorage.removeItem("adminToken"); // ← CLEAR ANY OLD TOKEN
+   } catch (error) {
+     localStorage.removeItem("adminToken"); // ← ALWAYS clear on fail
+   }
 
-  // Update React state immediately
-  setAdmin(email, data.token);
+   // Normal Firebase Login
+   signInUser(email, pass)
+     .then(async (result) => {
+       const user = result.user;
 
-  toast.success("Admin logged in!");
-  navigate("/dashboard");
-  return; // stops further login
-}
+       localStorage.removeItem("adminToken"); // ← ENSURE no admin token
 
-    } catch (error) {
-      // Fail silently, move to Firebase login
-    }
+       await fetch("http://localhost:3000/api/register-user", {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json",
+           Authorization: `Bearer ${await user.getIdToken()}`,
+         },
+         body: JSON.stringify({
+           displayName: user.displayName,
+           photoURL: user.photoURL,
+         }),
+       });
 
-    // ---- Normal Firebase user login ----
-    signInUser(email, pass)
-      .then(async (result) => {
-        const user = result.user;
-
-        // Register user to backend
-        await fetch("http://localhost:3000/api/register-user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await user.getIdToken()}`,
-          },
-          body: JSON.stringify({
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          }),
-        });
-
-        localStorage.setItem("role", "user");
-
-        toast.success("Logged in!");
-        navigate("/");
-      })
-      .catch(() => toast.error("Invalid email or password"))
-      .finally(() => setLoading(false));
-  };
+       localStorage.setItem("role", "user");
+       toast.success("Logged in!");
+       navigate("/");
+     })
+     .catch(() => toast.error("Invalid email or password"))
+     .finally(() => setLoading(false));
+ };
 
 
   const handleGoogleLogin = () => {
@@ -73,6 +70,9 @@ if (adminRes.ok) {
     signInGoogle()
       .then(async (result) => {
         const user = result.user;
+
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminEmail");
 
         await fetch("http://localhost:3000/api/register-user", {
           method: "POST",
@@ -107,7 +107,7 @@ if (adminRes.ok) {
   // ---------------------
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
       <div className="hero-content flex-col lg:flex-row shadow-xl rounded-2xl bg-base-100 p-10 gap-12">
         {/* Left text */}
         <div className="max-w-md text-center lg:text-left">
@@ -118,7 +118,7 @@ if (adminRes.ok) {
         </div>
 
         {/* Login Card */}
-        <div className="card bg-base-100 w-full max-w-sm shadow-xl border border-base-300">
+        <div className="card bg-transparent-md w-full max-w-sm shadow-xl border border-base-300">
           <div className="card-body">
             <fieldset className="fieldset flex flex-col gap-3">
               {/* Email */}

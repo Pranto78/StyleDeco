@@ -91,7 +91,7 @@ const AssignDecorator = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: i * 0.05 }}
-                className="bg-gray-800 hover:bg-gray-700 transition-colors duration-200"
+                className="bg-transparent transition-colors duration-200"
               >
                 <td className="px-4 py-2">{i + 1}</td>
                 <td className="px-4 py-2 break-words">{user.userEmail}</td>
@@ -104,13 +104,13 @@ const AssignDecorator = () => {
                 </td>
                 <td className="px-4 py-2 flex justify-center">
                   {user.decoratorAssigned ? (
-                    <span className="px-3 py-1 rounded-full bg-green-600 text-white font-bold">
+                    <span className="px-3 py-1 rounded-full bg-primary-gradient text-white font-bold">
                       Assigned
                     </span>
                   ) : (
                     <button
                       onClick={() => openModal(user)}
-                      className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-500 shadow-md"
+                      className="px-3 py-1 rounded-lg bg-blue-400 text-white font-bold hover:bg-blue-500 shadow-md"
                     >
                       Assign
                     </button>
