@@ -52,6 +52,37 @@ const ManageBooking = () => {
     }
   };
 
+  // 🔥 Sorting Logic
+  const handleSort = (type) => {
+    let sorted = [...bookings];
+
+    if (type === "date-new") {
+      sorted.sort((a, b) => new Date(b.bookedAt) - new Date(a.bookedAt));
+    }
+
+    if (type === "date-old") {
+      sorted.sort((a, b) => new Date(a.bookedAt) - new Date(b.bookedAt));
+    }
+
+    if (type === "status-paid") {
+      sorted.sort((a, b) => {
+        if (a.status === "paid" && b.status !== "paid") return -1;
+        if (a.status !== "paid" && b.status === "paid") return 1;
+        return 0;
+      });
+    }
+
+    if (type === "status-pending") {
+      sorted.sort((a, b) => {
+        if (a.status === "pending" && b.status !== "pending") return -1;
+        if (a.status !== "pending" && b.status === "pending") return 1;
+        return 0;
+      });
+    }
+
+    setBookings(sorted);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -62,6 +93,24 @@ const ManageBooking = () => {
       <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-primary-gradient">
         Manage All Bookings
       </h2>
+
+      {/* 🌟 Sorting UI — Blue Neon Glass */}
+      <div className="mb-6 flex justify-start">
+        <div className="bg-gray-800/40 backdrop-blur-md border border-blue-500/40 shadow-[0_0_15px_rgba(37,99,235,0.5)] rounded-xl px-4 py-3 flex items-center gap-3">
+          <span className="text-blue-400 font-semibold">Sort By:</span>
+
+          <select
+            className="bg-gray-900 text-blue-300 border border-blue-600 rounded-lg px-3 py-2 shadow-inner focus:ring-2 focus:ring-blue-500 transition-all"
+            onChange={(e) => handleSort(e.target.value)}
+          >
+            <option value="">Select</option>
+            <option value="date-new">📅 Date — Newest</option>
+            <option value="date-old">📅 Date — Oldest</option>
+            <option value="status-paid">💰 Paid First</option>
+            <option value="status-pending">⌛ Pending First</option>
+          </select>
+        </div>
+      </div>
 
       {/* Table for medium+ screens */}
       <div className="hidden md:block bg-gray-900 rounded-2xl p-4 shadow-2xl overflow-x-auto">
