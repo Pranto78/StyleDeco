@@ -50,12 +50,12 @@ const Navbar = () => {
         </NavLink>
       </li>
       <li>
-        <NavLink to="/profile" style={getLinkStyle}>
+        <NavLink to="/about" style={getLinkStyle}>
           About
         </NavLink>
       </li>
       <li>
-        <NavLink to="/profile" style={getLinkStyle}>
+        <NavLink to="/contact" style={getLinkStyle}>
           Contact
         </NavLink>
       </li>

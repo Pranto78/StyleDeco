@@ -8,7 +8,7 @@ const About = () => {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="min-h-screen p-6 sm:p-10 flex flex-col items-center justify-center"
+      className="min-h-screen p-6 sm:p-10 flex flex-col items-center justify-center mt-4"
     >
       {/* Glass Container */}
       <div className="w-full max-w-4xl bg-white/5 backdrop-blur-md border border-blue-500/30 rounded-3xl p-8 sm:p-12 shadow-[0_0_30px_rgba(37,99,235,0.25)]">

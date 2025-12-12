@@ -26,6 +26,8 @@ import MyAssignProject from "../components/Dashboard/Decorator/MyAssignProject";
 import TodaysSchedule from "../components/Dashboard/Decorator/TodaysSchedule";
 import UpdateProjectStatus from "../components/Dashboard/Decorator/UpdateProjectStatus";
 import EarningSummary from "../components/Dashboard/Decorator/EarningSummary";
+import About from "../components/About/About";
+import Contact from "../components/Contact/Contact";
 
 export const router = createBrowserRouter([
   {
@@ -39,6 +41,14 @@ export const router = createBrowserRouter([
       {
         path: "services",
         element: <Services></Services>,
+      },
+      {
+        path:"about",
+        element:<About></About>
+      },
+      {
+        path:"contact",
+        element:<Contact></Contact>
       },
       {
         path: "service-details/:id",
