@@ -119,7 +119,7 @@ const UpdateProjectStatus = () => {
                   value={p.projectStatus || "Assigned"}
                 >
                   {statuses.map((s) => (
-                    <option key={s} value={s} className="text-black">
+                    <option key={s} value={s} className="text-white bg-transparent">
                       {s}
                     </option>
                   ))}
