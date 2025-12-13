@@ -13,56 +13,58 @@ const Login = () => {
   const [pass, setPass] = useState("");
   const [loading, setLoading] = useState(false); // ← Added loading state
 
- const handleLogin = async () => {
-   setLoading(true);
+  const handleLogin = async () => {
+    setLoading(true);
 
-   try {
-     const adminRes = await fetch("http://localhost:3000/admin-login", {
-       method: "POST",
-       headers: { "Content-Type": "application/json" },
-       body: JSON.stringify({ email, password: pass }),
-     });
+    try {
+      const adminRes = await fetch(
+        "https://server-deco.vercel.app/admin-login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password: pass }),
+        }
+      );
 
-     if (adminRes.ok) {
-       const data = await adminRes.json();
-       setAdmin(email, data.token); // saves adminToken
-       toast.success("Welcome back, Admin!");
-       navigate("/dashboard");
-       return;
-     }
-     // If admin fails → make sure we are NOT admin
-     localStorage.removeItem("adminToken"); // ← CLEAR ANY OLD TOKEN
-   } catch (error) {
-     localStorage.removeItem("adminToken"); // ← ALWAYS clear on fail
-   }
+      if (adminRes.ok) {
+        const data = await adminRes.json();
+        setAdmin(email, data.token); // saves adminToken
+        toast.success("Welcome back, Admin!");
+        navigate("/dashboard/manage-decorators");
+        return;
+      }
+      // If admin fails → make sure we are NOT admin
+      localStorage.removeItem("adminToken"); // ← CLEAR ANY OLD TOKEN
+    } catch (error) {
+      localStorage.removeItem("adminToken"); // ← ALWAYS clear on fail
+    }
 
-   // Normal Firebase Login
-   signInUser(email, pass)
-     .then(async (result) => {
-       const user = result.user;
+    // Normal Firebase Login
+    signInUser(email, pass)
+      .then(async (result) => {
+        const user = result.user;
 
-       localStorage.removeItem("adminToken"); // ← ENSURE no admin token
+        localStorage.removeItem("adminToken");
 
-       await fetch("http://localhost:3000/api/register-user", {
-         method: "POST",
-         headers: {
-           "Content-Type": "application/json",
-           Authorization: `Bearer ${await user.getIdToken()}`,
-         },
-         body: JSON.stringify({
-           displayName: user.displayName,
-           photoURL: user.photoURL,
-         }),
-       });
+        await fetch("https://server-deco.vercel.app/api/register-user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${await user.getIdToken()}`,
+          },
+          body: JSON.stringify({
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+          }),
+        });
 
-       localStorage.setItem("role", "user");
-       toast.success("Logged in!");
-       navigate("/");
-     })
-     .catch(() => toast.error("Invalid email or password"))
-     .finally(() => setLoading(false));
- };
-
+        localStorage.setItem("role", "user");
+        toast.success("Logged in!");
+        navigate("/");
+      })
+      .catch(() => toast.error("Invalid email or password"))
+      .finally(() => setLoading(false));
+  };
 
   const handleGoogleLogin = () => {
     setLoading(true); // ← Start loading for Google too
@@ -74,7 +76,7 @@ const Login = () => {
         localStorage.removeItem("adminToken");
         localStorage.removeItem("adminEmail");
 
-        await fetch("http://localhost:3000/api/register-user", {
+        await fetch("https://server-deco.vercel.app/api/register-user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

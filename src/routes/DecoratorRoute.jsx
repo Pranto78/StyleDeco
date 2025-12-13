@@ -11,7 +11,7 @@ const DecoratorRoute = ({ children }) => {
 
   if (user && isDecorator) return children;
 
-  return <Navigate to="/dashboard" replace />;
+  return <Navigate to="/dashboard/assigned-projects" replace />;
 };
 
 export default DecoratorRoute;

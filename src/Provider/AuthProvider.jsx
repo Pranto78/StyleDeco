@@ -82,7 +82,7 @@ const AuthProvider = ({ children }) => {
         return;
       }
       const token = await currentUser.getIdToken();
-      const res = await axios.get("http://localhost:3000/me", {
+      const res = await axios.get("https://server-deco.vercel.app/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setRole(res.data.role);

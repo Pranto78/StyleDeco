@@ -1,9 +1,10 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import UseAuthContext from "../../Hooks/UseAuthContext";
-// import UseAuthContext from "../../Hooks/UseAuthContext";
-import decoLogo from '../../assets/yyy.png';
-
+import decoLogo from "../../assets/yyy.png";
+import toast from "react-hot-toast";
+import { LogIn, UserPlus, LogOut } from "lucide-react";
+import { motion } from "framer-motion";
 
 // Active link style function
 const getLinkStyle = ({ isActive }) => ({
@@ -14,26 +15,20 @@ const getLinkStyle = ({ isActive }) => ({
 
 const adminEmail = localStorage.getItem("adminEmail");
 
-
 const Navbar = () => {
-  const { user, logOut,role } = UseAuthContext();
+  const { user, logOut, role } = UseAuthContext();
 
   const handleLogout = async () => {
     try {
-      await logOut(); // Firebase sign out
-
-      // CRITICAL: Remove admin token so normal users work again!
+      await logOut();
       localStorage.removeItem("adminToken");
-      localStorage.removeItem("adminEmail"); // if you save it
-      localStorage.removeItem("role"); // optional cleanup
-
-      toast.success("Logged out successfully!"); // optional
+      localStorage.removeItem("adminEmail");
+      localStorage.removeItem("role");
+      toast.success("Logged out successfully!");
     } catch (err) {
-      console.error("Logout error:", err.message);
       toast.error("Logout failed");
     } finally {
-      // Optional: redirect to home
-      window.location.href = "/"; // or use navigate()
+      window.location.href = "/";
     }
   };
 
@@ -60,115 +55,108 @@ const Navbar = () => {
         </NavLink>
       </li>
 
-      {/* NEW (working) */}
       {user || adminEmail ? (
         <li>
           <NavLink to="/dashboard" style={getLinkStyle}>
             Dashboard
           </NavLink>
         </li>
-      ) : null}
+      ) : (
+        <>
+          {/* MOBILE ONLY */}
+          <li className="lg:hidden">
+            <NavLink to="/login" style={getLinkStyle}>
+              Login
+            </NavLink>
+          </li>
+          <li className="lg:hidden">
+            <NavLink to="/signup" style={getLinkStyle}>
+              Sign Up
+            </NavLink>
+          </li>
+        </>
+      )}
     </>
   );
 
   return (
-    <div className="navbar bg-transparent backdrop-blur-sm shadow-none mx-auto px-4 fixed top-0 left-0 w-full z-50">
+    <div className="navbar bg-transparent backdrop-blur-sm fixed top-0 w-full z-50 px-4">
       {/* Navbar Start */}
       <div className="navbar-start">
         <div className="dropdown">
           <label tabIndex={0} className="btn btn-ghost lg:hidden">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h8m-8 6h16"
-              />
-            </svg>
+            ☰
           </label>
-          <ul className="menu menu-sm dropdown-content bg-base-100 rounded-box z-50 mt-3 w-52 p-2 shadow">
+          <ul className="menu menu-sm dropdown-content bg-base-100 mt-3 w-52 p-2 shadow rounded-box">
             {links}
           </ul>
         </div>
+
         <Link
           to="/"
-          className="btn flex items-center justify-center btn-ghost font-bold text-primary-gradient text-2xl"
+          className="btn btn-ghost text-2xl font-bold flex items-center gap-2"
         >
-          <div className="mt-2">
-            <img src={decoLogo} className="h-14 w-15 object-contain" alt="" />
-          </div>
-          <div className="">StyleDecor</div>
+          <img src={decoLogo} className="h-14 object-contain" alt="" />
+          <span className="text-primary-gradient">StyleDecor</span>
         </Link>
       </div>
 
-      {/* Navbar Center (large screen) */}
+      {/* Navbar Center */}
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1 gap-10">{links}</ul>
+        <ul className="menu menu-horizontal gap-10">{links}</ul>
       </div>
 
-      {/* Navbar End */}
-      <div className="navbar-end flex items-center gap-3">
-        {/* If user is logged in */}
+      {/* Navbar End (DESKTOP) */}
+      <div className="navbar-end hidden lg:flex items-center gap-3">
         {user ? (
-          <>
-            {/* User Photo */}
-            <div className="dropdown dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-ghost btn-circle avatar"
-              >
-                <div className="w-10 rounded-full">
-                  <img
-                    src={
-                      user?.photoURL ||
-                      "https://i.ibb.co.com/k63VV2qG/software-engineer.png"
-                    }
-                    alt="User"
-                  />
-                </div>
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} className="btn btn-ghost btn-circle avatar">
+              <div className="w-10 rounded-full">
+                <img
+                  src={
+                    user?.photoURL ||
+                    "https://i.ibb.co.com/k63VV2qG/software-engineer.png"
+                  }
+                  alt="User"
+                />
               </div>
-
-              {/* Dropdown Menu */}
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content bg-base-100 mt-3 w-40 rounded-box shadow"
-              >
-                <li>
-                  <Link to="/dashboard/profile">Profile</Link>
-                </li>
-                <li>
-                  <button
-                    onClick={handleLogout}
-                    className="btn-primary-gradient"
-                  >
-                    Logout
-                  </button>
-                </li>
-              </ul>
             </div>
-          </>
+
+            <ul className="menu menu-sm dropdown-content bg-base-100 mt-3 w-40 shadow rounded-box">
+              <li>
+                <Link to="/dashboard/profile">Profile</Link>
+              </li>
+              <li>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={handleLogout}
+                  className="btn-primary-gradient flex items-center gap-2"
+                >
+                  <LogOut size={16} /> Logout
+                </motion.button>
+              </li>
+            </ul>
+          </div>
         ) : (
-          // If NO user (show login/signup)
           <>
-            <Link
-              to="/login"
-              className="btn-primary-gradient px-3 bg-gray-400 rounded py-1 text-white"
-            >
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="btn-primary-gradient px-3 rounded py-1 text-white"
-            >
-              Sign Up
-            </Link>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Link
+                to="/login"
+                className="btn-primary-gradient px-3 py-1 rounded text-white flex items-center gap-2"
+              >
+                <LogIn size={16} /> Login
+              </Link>
+            </motion.div>
+
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <Link
+                to="/signup"
+                className="btn-primary-gradient px-3 py-1 rounded text-white flex items-center gap-2"
+              >
+                <UserPlus size={16} /> Sign Up
+              </Link>
+            </motion.div>
           </>
         )}
       </div>

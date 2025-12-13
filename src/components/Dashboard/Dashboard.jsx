@@ -61,75 +61,68 @@ const Dashboard = () => {
    }
  };
 
-  const userMenu = [
-    { name: "My Profile", icon: <User size={20} />, to: "/dashboard/profile" },
-    {
-      name: "My Bookings",
-      icon: <Calendar size={20} />,
-      to: "/dashboard/my-bookings",
-    },
-    {
-      name: "Payment History",
-      icon: <CreditCard size={20} />,
-      to: "/dashboard/payment-history",
-    },
-  ];
+ const userMenu = [
+   { name: "My Profile", icon: <User size={20} />, to: "profile" },
+   { name: "My Bookings", icon: <Calendar size={20} />, to: "my-bookings" },
+   {
+     name: "Payment History",
+     icon: <CreditCard size={20} />,
+     to: "payment-history",
+   },
+ ];
 
-  const decoratorMenu = [
-    {
-      name: "My Assigned Projects",
-      icon: <Briefcase size={20} />,
-      to: "/dashboard/assigned-projects",
-    },
-    {
-      name: "Today's Schedule",
-      icon: <Calendar size={20} />,
-      to: "/dashboard/today-schedule",
-    },
-    {
-      name: "Update Project Status",
-      icon: <CheckSquare size={20} />,
-      to: "/dashboard/update-status",
-    },
-    {
-      name: "Earnings Summary",
-      icon: <DollarSign size={20} />,
-      to: "/dashboard/earnings",
-    },
-  ];
+ const decoratorMenu = [
+   {
+     name: "My Assigned Projects",
+     icon: <Briefcase size={20} />,
+     to: "assigned-projects",
+   },
+   {
+     name: "Today's Schedule",
+     icon: <Calendar size={20} />,
+     to: "today-schedule",
+   },
+   {
+     name: "Update Project Status",
+     icon: <CheckSquare size={20} />,
+     to: "update-status",
+   },
+   { name: "Earnings Summary", icon: <DollarSign size={20} />, to: "earnings" },
+ ];
 
-  const adminMenu = [
-    {
-      name: "Manage Decorators",
-      icon: <Users size={20} />,
-      to: "/dashboard/manage-decorators",
-    },
-    {
-      name: "Manage Services",
-      icon: <Package size={20} />,
-      to: "/dashboard/manage-services",
-    },
-    {
-      name: "Manage Bookings",
-      icon: <ClipboardList size={20} />,
-      to: "/dashboard/manage-bookings",
-    },
-    {
-      name: "Assign Decorator",
-      icon: <Users size={20} />,
-      to: "/dashboard/assign-decorator",
-    },
-    {
-      name: "Revenue Monitoring",
-      icon: <DollarSign size={20} />,
-      to: "/dashboard/revenue-monitoring",
-    },
-    {
-      name: "Analytics Charts",
-      icon: <BarChart3 size={20} />,
-      to: "/dashboard/analytics-charts",
-    },
-  ];
+ const adminMenu = [
+   {
+     name: "Manage Decorators",
+     icon: <Users size={20} />,
+     to: "manage-decorators",
+   },
+   {
+     name: "Manage Services",
+     icon: <Package size={20} />,
+     to: "manage-services",
+   },
+   {
+     name: "Manage Bookings",
+     icon: <ClipboardList size={20} />,
+     to: "manage-bookings",
+   },
+   {
+     name: "Assign Decorator",
+     icon: <Users size={20} />,
+     to: "assign-decorator",
+   },
+   {
+     name: "Revenue Monitoring",
+     icon: <DollarSign size={20} />,
+     to: "revenue-monitoring",
+   },
+   {
+     name: "Analytics Charts",
+     icon: <BarChart3 size={20} />,
+     to: "analytics-charts",
+   },
+ ];
+
 
   const menuItems =
     role === "admin"

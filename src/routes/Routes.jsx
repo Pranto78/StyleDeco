@@ -28,6 +28,7 @@ import UpdateProjectStatus from "../components/Dashboard/Decorator/UpdateProject
 import EarningSummary from "../components/Dashboard/Decorator/EarningSummary";
 import About from "../components/About/About";
 import Contact from "../components/Contact/Contact";
+import RoleRedirect from "./RoleRedirect";
 
 export const router = createBrowserRouter([
   {
@@ -43,12 +44,12 @@ export const router = createBrowserRouter([
         element: <Services></Services>,
       },
       {
-        path:"about",
-        element:<About></About>
+        path: "about",
+        element: <About></About>,
       },
       {
-        path:"contact",
-        element:<Contact></Contact>
+        path: "contact",
+        element: <Contact></Contact>,
       },
       {
         path: "service-details/:id",
@@ -69,103 +70,96 @@ export const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
+      // ✅ DEFAULT LANDING
+      { index: true, element: <RoleRedirect /> },
+
+      // USER
+      { path: "profile", element: <MyProfle /> },
+      { path: "my-bookings", element: <MyBooking /> },
+      { path: "payment-history", element: <PaymentHistory /> },
+      { path: "payment-cancelled", element: <PaymentCancel /> },
+      { path: "payment-success", element: <PaymentSuccess /> },
+
+      // ADMIN
       {
-        path: "/dashboard/profile",
-        element: <MyProfle></MyProfle>,
-      },
-      {
-        path: "/dashboard/my-bookings",
-        element: <MyBooking></MyBooking>,
-      },
-      {
-        path: "/dashboard/payment-history",
-        element: <PaymentHistory></PaymentHistory>,
-      },
-      {
-        path: "payment-cancelled",
-        element: <PaymentCancel></PaymentCancel>,
-      },
-      {
-        path: "payment-success",
-        element: <PaymentSuccess></PaymentSuccess>,
-      },
-      {
-        path: "/dashboard/manage-decorators",
+        path: "manage-decorators",
         element: (
           <AdminRoute>
-            <ManageDecorator></ManageDecorator>
+            <ManageDecorator />
           </AdminRoute>
         ),
       },
       {
-        path: "/dashboard/manage-services",
+        path: "manage-services",
         element: (
           <AdminRoute>
-            <ManageService></ManageService>
+            <ManageService />
           </AdminRoute>
         ),
       },
       {
-        path: "/dashboard/manage-bookings",
+        path: "manage-bookings",
         element: (
           <AdminRoute>
-            <ManageBooking></ManageBooking>
+            <ManageBooking />
           </AdminRoute>
         ),
       },
       {
-        path: "/dashboard/assign-decorator",
+        path: "assign-decorator",
         element: (
           <AdminRoute>
-            <AssignDecorator></AssignDecorator>
+            <AssignDecorator />
           </AdminRoute>
         ),
       },
       {
-        path: "/dashboard/analytics-charts",
+        path: "analytics-charts",
         element: (
           <AdminRoute>
-            <AnalyticsCharts></AnalyticsCharts>
+            <AnalyticsCharts />
           </AdminRoute>
         ),
       },
       {
-        path: "/dashboard/revenue-monitoring",
+        path: "revenue-monitoring",
         element: (
           <AdminRoute>
-            <RevenueMonitoring></RevenueMonitoring>
+            <RevenueMonitoring />
           </AdminRoute>
         ),
       },
+
+      // DECORATOR
       {
-        path: "/dashboard/assigned-projects",
+        path: "assigned-projects",
         element: (
           <DecoratorRoute>
-            <MyAssignProject></MyAssignProject>
+            <MyAssignProject />
           </DecoratorRoute>
         ),
       },
       {
-        path: "/dashboard/today-schedule",
+        path: "today-schedule",
         element: (
           <DecoratorRoute>
-            <TodaysSchedule></TodaysSchedule>
+            <TodaysSchedule />
           </DecoratorRoute>
         ),
       },
       {
-        path: "/dashboard/update-status",
+        path: "update-status",
         element: (
           <DecoratorRoute>
-            <UpdateProjectStatus></UpdateProjectStatus>
+            <UpdateProjectStatus />
           </DecoratorRoute>
         ),
       },
       {
-        path: "/dashboard/earnings",
+        path: "earnings",
         element: (
           <DecoratorRoute>
-            <EarningSummary></EarningSummary>
+            <EarningSummary />
           </DecoratorRoute>
         ),
       },

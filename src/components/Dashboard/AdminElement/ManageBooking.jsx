@@ -10,9 +10,12 @@ const ManageBooking = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/admin/bookings", {
-        headers: { "x-admin-token": adminToken },
-      });
+      const res = await axios.get(
+        "https://server-deco.vercel.app/admin/bookings",
+        {
+          headers: { "x-admin-token": adminToken },
+        }
+      );
       setBookings(res.data);
     } catch (err) {
       console.log(err);
@@ -26,9 +29,12 @@ const ManageBooking = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/admin/bookings/${id}`, {
-        headers: { "x-admin-token": adminToken },
-      });
+      await axios.delete(
+        `https://server-deco.vercel.app/admin/bookings/${id}`,
+        {
+          headers: { "x-admin-token": adminToken },
+        }
+      );
       toast.success("Booking deleted successfully");
       fetchBookings();
     } catch (err) {
@@ -40,7 +46,7 @@ const ManageBooking = () => {
   const handleUpdate = async (id) => {
     try {
       await axios.put(
-        `http://localhost:3000/admin/bookings/${id}`,
+        `https://server-deco.vercel.app/admin/bookings/${id}`,
         { status: "paid" },
         { headers: { "x-admin-token": adminToken } }
       );
