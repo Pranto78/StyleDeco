@@ -27,7 +27,7 @@ const ManageService = () => {
   const fetchServices = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("https://server-deco.vercel.app/services");
+      const res = await axios.get("http://localhost:3000/services");
       setServices(res.data);
     } catch (err) {
       toast.error("Failed to load services");
@@ -61,15 +61,11 @@ const ManageService = () => {
         createdByEmail: adminEmail,
       };
 
-      const res = await axios.post(
-        "https://server-deco.vercel.app/services",
-        payload,
-        {
-          headers: {
-            "x-admin-token": localStorage.getItem("adminToken"),
-          },
-        }
-      );
+      const res = await axios.post("http://localhost:3000/services", payload, {
+        headers: {
+          "x-admin-token": localStorage.getItem("adminToken"),
+        },
+      });
 
       if (res.data.insertedId) {
         toast.success("Service Created Successfully!");

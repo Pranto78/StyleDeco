@@ -3,7 +3,7 @@ import axios from "axios";
 import { getAuth } from "firebase/auth";
 
 const axiosSecure = axios.create({
-  baseURL: "https://server-deco.vercel.app",
+  baseURL: "http://localhost:3000",
 });
 
 // Hooks/UseAxiosSecure.js

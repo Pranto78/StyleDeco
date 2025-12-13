@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { Edit, Trash2 } from "lucide-react"; // ← Lucide icons
 import AssignDecoratorModal from "./AssignDecoratorModal";
 import UseAxiosSecure from "../../../Hooks/UseAxiosSecure";
 
@@ -58,6 +59,58 @@ const AssignDecorator = () => {
     }
   };
 
+  const handleUpdateBooking = async (id) => {
+    try {
+      await axiosSecure.put(`/admin/bookings/${id}`, { status: "updated" });
+      toast.success("Booking updated successfully");
+      fetchPaidUsers();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update booking");
+    }
+  };
+
+  const handleDeleteBooking = async (id) => {
+    try {
+      await axiosSecure.delete(`/admin/bookings/${id}`);
+      toast.success("Booking deleted successfully");
+      fetchPaidUsers();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete booking");
+    }
+  };
+
+  const confirmDeleteBooking = (id) => {
+    toast(
+      (t) => (
+        <div className="flex flex-col gap-3 p-3 bg-gray-900 text-white rounded-xl shadow-lg border border-gray-700">
+          <p className="font-semibold text-lg">
+            Are you sure you want to delete this booking?
+          </p>
+          <div className="flex gap-2 justify-end">
+            <button
+              className="px-4 py-2 bg-red-600/20 backdrop-blur-md border border-red-400/50 text-red-400 hover:bg-red-600/40 hover:text-white rounded-lg transition-all duration-300"
+              onClick={async () => {
+                toast.dismiss(t.id);
+                await handleDeleteBooking(id);
+              }}
+            >
+              Delete
+            </button>
+            <button
+              className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/30 text-blue-400 hover:bg-white/20 hover:text-blue-300 rounded-lg transition-all duration-300"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: 6000 }
+    );
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -82,6 +135,7 @@ const AssignDecorator = () => {
                 Booking Date
               </th>
               <th className="px-4 py-2 text-center font-semibold">Decorator</th>
+              <th className="px-4 py-2 text-center font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
@@ -102,9 +156,9 @@ const AssignDecorator = () => {
                 <td className="px-4 py-2">
                   {new Date(user.bookedAt).toLocaleDateString()}
                 </td>
-                <td className="px-4 py-2 flex justify-center">
+                <td className="px-4 py-2 text-center">
                   {user.decoratorAssigned ? (
-                    <span className="px-3 py-1 rounded-full bg-primary-gradient text-white font-bold">
+                    <span className="inline-block px-3 py-1 rounded-full bg-primary-gradient text-white font-bold">
                       Assigned
                     </span>
                   ) : (
@@ -115,6 +169,21 @@ const AssignDecorator = () => {
                       Assign
                     </button>
                   )}
+                </td>
+
+                <td className="px-4 py-2 text-center flex justify-center gap-2">
+                  <button
+                    onClick={() => handleUpdateBooking(user._id)}
+                    className="p-2 rounded-lg bg-white/10 backdrop-blur-md border border-blue-400/40 text-blue-400 hover:bg-white/20 hover:text-blue-300 transition-all"
+                  >
+                    <Edit size={18} /> {/* Lucide Edit icon */}
+                  </button>
+                  <button
+                    onClick={() => confirmDeleteBooking(user._id)}
+                    className="p-2 rounded-lg bg-red-600/20 backdrop-blur-md border border-red-400/50 text-red-400 hover:bg-red-600/40 hover:text-white transition-all"
+                  >
+                    <Trash2 size={18} /> {/* Lucide Trash2 icon */}
+                  </button>
                 </td>
               </motion.tr>
             ))}
@@ -164,6 +233,20 @@ const AssignDecorator = () => {
               <strong>Booking Date:</strong>{" "}
               {new Date(user.bookedAt).toLocaleDateString()}
             </p>
+            <div className="flex gap-2 mt-2 justify-end">
+              <button
+                onClick={() => handleUpdateBooking(user._id)}
+                className="p-2 rounded-lg bg-white/10 backdrop-blur-md border border-blue-400/40 text-blue-400 hover:bg-white/20 hover:text-blue-300 transition-all"
+              >
+                <Edit size={18} /> {/* Lucide Edit icon */}
+              </button>
+              <button
+                onClick={() => confirmDeleteBooking(user._id)}
+                className="p-2 rounded-lg bg-red-600/20 backdrop-blur-md border border-red-400/50 text-red-400 hover:bg-red-600/40 hover:text-white transition-all"
+              >
+                <Trash2 size={18} /> {/* Lucide Trash2 icon */}
+              </button>
+            </div>
           </motion.div>
         ))}
       </div>

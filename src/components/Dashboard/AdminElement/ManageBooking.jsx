@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Trash2, Edit2 } from "lucide-react";
+import { Trash2, Edit2, Edit } from "lucide-react";
 
 const ManageBooking = () => {
   const [bookings, setBookings] = useState([]);
@@ -10,12 +10,9 @@ const ManageBooking = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get(
-        "https://server-deco.vercel.app/admin/bookings",
-        {
-          headers: { "x-admin-token": adminToken },
-        }
-      );
+      const res = await axios.get("http://localhost:3000/admin/bookings", {
+        headers: { "x-admin-token": adminToken },
+      });
       setBookings(res.data);
     } catch (err) {
       console.log(err);
@@ -29,12 +26,9 @@ const ManageBooking = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `https://server-deco.vercel.app/admin/bookings/${id}`,
-        {
-          headers: { "x-admin-token": adminToken },
-        }
-      );
+      await axios.delete(`http://localhost:3000/admin/bookings/${id}`, {
+        headers: { "x-admin-token": adminToken },
+      });
       toast.success("Booking deleted successfully");
       fetchBookings();
     } catch (err) {
@@ -46,7 +40,7 @@ const ManageBooking = () => {
   const handleUpdate = async (id) => {
     try {
       await axios.put(
-        `https://server-deco.vercel.app/admin/bookings/${id}`,
+        `http://localhost:3000/admin/bookings/${id}`,
         { status: "paid" },
         { headers: { "x-admin-token": adminToken } }
       );
@@ -161,20 +155,21 @@ const ManageBooking = () => {
                     {b.status === "paid" ? "Paid" : "Pending"}
                   </span>
                 </td>
+                {/* Table Actions */}
                 <td className="px-4 py-2 flex justify-center gap-3">
                   <button
                     onClick={() => handleUpdate(b._id)}
                     title="Update"
-                    className="p-2 bg-blue-600 hover:bg-blue-500 rounded-lg shadow-md"
+                    className="p-2 bg-white/10 backdrop-blur-md border border-blue-400/40 text-blue-400 hover:bg-white/20 hover:text-blue-300 rounded-lg transition-all duration-300"
                   >
-                    <Edit2 className="w-5 h-5 text-white" />
+                    <Edit className="w-5 h-5" />
                   </button>
                   <button
-                    onClick={() => handleDelete(b._id)}
+                    onClick={() => confirmDelete(b._id)}
                     title="Delete"
-                    className="p-2 bg-red-600 hover:bg-red-500 rounded-lg shadow-md"
+                    className="p-2 bg-red-600/20 backdrop-blur-md border border-red-400/50 text-red-400 hover:bg-red-600/40 hover:text-white rounded-lg transition-all duration-300"
                   >
-                    <Trash2 className="w-5 h-5 text-white" />
+                    <Trash2 className="w-5 h-5" />
                   </button>
                 </td>
               </motion.tr>
@@ -203,7 +198,7 @@ const ManageBooking = () => {
                   className="p-2 bg-blue-600 hover:bg-blue-500 rounded-lg shadow-md"
                   title="Update"
                 >
-                  <Edit2 className="w-5 h-5 text-white" />
+                  <Edit className="w-5 h-5 text-white" />
                 </button>
                 <button
                   onClick={() => handleDelete(b._id)}

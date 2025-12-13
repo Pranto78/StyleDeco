@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { Search, UserPlus, ToggleLeft, ToggleRight } from "lucide-react";
+import {
+  Search,
+  UserPlus,
+  ToggleLeft,
+  ToggleRight,
+  Trash2,
+  Pencil,
+  Edit,
+} from "lucide-react";
 import UseAxiosSecure from "../../../Hooks/UseAxiosSecure";
 
 const ManageDecorator = () => {
@@ -11,13 +19,15 @@ const ManageDecorator = () => {
   const [specialties, setSpecialties] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const axiosSecure = UseAxiosSecure(); // Axios instance
+  const axiosSecure = UseAxiosSecure();
 
-  // Fetch users from backend
+  // Fetch users
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await axiosSecure.get("/admin/users", { params: { search } });
+      const res = await axiosSecure.get("/admin/users", {
+        params: { search },
+      });
       setUsers(res.data.users || []);
     } catch (err) {
       console.error(err);
@@ -31,7 +41,7 @@ const ManageDecorator = () => {
     fetchUsers();
   }, [search]);
 
-  // Open modal to make user a decorator
+  // Open modal
   const makeDecorator = (email) => {
     const user = users.find((u) => u.email === email);
     setSelectedUser(user);
@@ -39,7 +49,7 @@ const ManageDecorator = () => {
     setIsModalOpen(true);
   };
 
-  // Confirm making decorator
+  // Confirm make / update decorator
   const confirmMakeDecorator = async () => {
     if (!specialties.trim()) {
       toast.error("Please add at least one specialty");
@@ -52,11 +62,8 @@ const ManageDecorator = () => {
         { specialties: specialties.split(",").map((s) => s.trim()) }
       );
 
-      toast.success(
-        res.data.message || `${selectedUser.email} is now a decorator`
-      );
+      toast.success(res.data.message || "Decorator updated");
 
-      // 1️⃣ Update local users state immediately
       setUsers((prev) =>
         prev.map((user) =>
           user.email === selectedUser.email
@@ -70,16 +77,14 @@ const ManageDecorator = () => {
         )
       );
 
-      // 2️⃣ Close modal
       setIsModalOpen(false);
     } catch (err) {
-      console.error(err.response?.data || err);
-      toast.error(err.response?.data?.message || "Failed to promote user");
+      console.error(err);
+      toast.error("Failed to promote user");
     }
   };
 
-
-  // Toggle decorator active/inactive
+  // Toggle active
   const toggleActive = async (email) => {
     try {
       await axiosSecure.patch(`/admin/users/${email}/toggle-active`);
@@ -88,6 +93,42 @@ const ManageDecorator = () => {
       console.error(err);
       toast.error("Failed to toggle status");
     }
+  };
+
+  // 🔴 DELETE WITH TOAST CONFIRM
+  const deleteDecorator = (email) => {
+    toast(
+      (t) => (
+        <span className="flex flex-col gap-2">
+          <b>Delete this decorator?</b>
+          <div className="flex gap-2">
+            <button
+              className="btn btn-sm btn-error text-white"
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  await axiosSecure.delete(`/admin/decorators/${email}`);
+                  toast.success("User deleted");
+
+                  // Remove user from table
+                  setUsers((prev) => prev.filter((u) => u.email !== email));
+                } catch (err) {
+                  console.error(err);
+                  toast.error("Failed to delete user");
+                }
+              }}
+            >
+              Delete
+            </button>
+
+            <button className="btn btn-sm" onClick={() => toast.dismiss(t.id)}>
+              Cancel
+            </button>
+          </div>
+        </span>
+      ),
+      { duration: 6000 }
+    );
   };
 
   return (
@@ -110,10 +151,10 @@ const ManageDecorator = () => {
         </div>
       </div>
 
-      {/* Users Table */}
+      {/* Table */}
       {loading ? (
-        <div className="flex items-center justify-center min-h-screen bg-transparent bg-opacity-20">
-          <span className="loading loading-infinity loading-xl text-6xl text-blue-500"></span>
+        <div className="flex items-center justify-center min-h-screen">
+          <span className="loading loading-infinity loading-xl text-blue-500"></span>
         </div>
       ) : (
         <div className="overflow-x-auto shadow-xl rounded-lg">
@@ -127,95 +168,102 @@ const ManageDecorator = () => {
                 <th>Specialties</th>
                 <th>Status</th>
                 <th>Actions</th>
+                <th>Update/Delete</th>
               </tr>
             </thead>
+
             <tbody>
-              {users.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="text-center py-10 text-gray-500">
-                    No users found
-                  </td>
-                </tr>
-              ) : (
-                users.map((user) => (
-                  <tr key={user._id} className="hover">
-                    <td>
-                      <div className="avatar">
-                        <div className="w-12 rounded-full">
-                          <img
-                            src={
-                              user.photoURL ||
-                              "https://i.ibb.co/4pB1q7q/user.png"
-                            }
-                            alt="user"
-                          />
-                        </div>
+              {users.map((user) => (
+                <tr key={user._id}>
+                  <td>
+                    <div className="avatar">
+                      <div className="w-12 rounded-full">
+                        <img
+                          src={
+                            user.photoURL || "https://i.ibb.co/4pB1q7q/user.png"
+                          }
+                          alt="user"
+                        />
                       </div>
-                    </td>
-                    <td className="font-medium">{user.displayName || "N/A"}</td>
-                    <td>{user.email}</td>
-                    <td>
-                      <span
-                        className={`badge ${
-                          user.role === "decorator"
-                            ? "badge-success"
-                            : "badge-ghost"
-                        }`}
+                    </div>
+                  </td>
+
+                  <td>{user.displayName || "N/A"}</td>
+                  <td>{user.email}</td>
+
+                  <td>
+                    <span
+                      className={`badge ${
+                        user.role === "decorator"
+                          ? "badge-success"
+                          : "badge-ghost"
+                      }`}
+                    >
+                      {user.role.toUpperCase()}
+                    </span>
+                  </td>
+
+                  <td>
+                    {user.specialties?.length > 0
+                      ? user.specialties.join(", ")
+                      : "-"}
+                  </td>
+
+                  <td>
+                    {user.role === "decorator" && (
+                      <button
+                        onClick={() => toggleActive(user.email)}
+                        className="btn btn-xs"
                       >
-                        {user.role.toUpperCase()}
+                        {user.isActive ? (
+                          <>
+                            <ToggleRight className="text-success" /> Active
+                          </>
+                        ) : (
+                          <>
+                            <ToggleLeft className="text-error" /> Inactive
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </td>
+
+                  <td>
+                    {user.role !== "decorator" ? (
+                      <button
+                        onClick={() => makeDecorator(user.email)}
+                        className="btn btn-sm btn-primary-gradient rounded-2xl"
+                      >
+                        <UserPlus size={16} /> Decorator
+                      </button>
+                    ) : (
+                      <span className="text-primary-gradient font-medium">
+                        Decorator
                       </span>
-                    </td>
-                    <td>
-                      {user.specialties?.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {user.specialties.map((s, i) => (
-                            <span
-                              key={i}
-                              className="badge badge-sm badge-outline"
-                            >
-                              {s}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        "-"
-                      )}
-                    </td>
-                    <td>
-                      {user.role === "decorator" && (
-                        <button
-                          onClick={() => toggleActive(user.email)}
-                          className="btn btn-xs"
-                        >
-                          {user.isActive ? (
-                            <>
-                              <ToggleRight className="text-success" /> Active
-                            </>
-                          ) : (
-                            <>
-                              <ToggleLeft className="text-error" /> Inactive
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </td>
-                    <td>
-                      {user.role !== "decorator" ? (
+                    )}
+                  </td>
+
+                  {/* ✅ MANAGE COLUMN */}
+                  <td className="flex gap-2">
+                    {user.role === "decorator" && (
+                      <>
                         <button
                           onClick={() => makeDecorator(user.email)}
-                          className="btn btn-sm btn-primary-gradient flex items-center gap-1 rounded-2xl"
+                          className="px-2 py-4 btn btn-xs bg-white/10 rounded-xl backdrop-blur-md border border-white/30 text-blue-400 hover:bg-white/20 hover:text-blue-300 transition-all duration-300"
                         >
-                          <UserPlus size={16} /> Decorator
+                          <Edit size={18} />
                         </button>
-                      ) : (
-                        <span className="text-primary-gradient font-medium">
-                          Decorator
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
+                        <button
+                          onClick={() => deleteDecorator(user.email)}
+                          className="px-2 py-4 btn btn-xs bg-red-600/20 rounded-xl backdrop-blur-md border border-red-400/50 text-red-400 hover:bg-red-600/40 hover:text-white transition-all duration-300"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -228,11 +276,8 @@ const ManageDecorator = () => {
             <h3 className="font-bold text-lg">
               Make {selectedUser?.displayName} a Decorator
             </h3>
-            <p className="py-4">Enter specialties (comma separated)</p>
             <input
-              type="text"
-              placeholder="home, wedding, office, birthday..."
-              className="input input-bordered w-full"
+              className="input input-bordered w-full mt-4"
               value={specialties}
               onChange={(e) => setSpecialties(e.target.value)}
             />
