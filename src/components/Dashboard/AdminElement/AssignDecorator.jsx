@@ -84,7 +84,7 @@ const AssignDecorator = () => {
   const confirmDeleteBooking = (id) => {
     toast(
       (t) => (
-        <div className="flex flex-col gap-3 p-3 bg-gray-900 text-white rounded-xl shadow-lg border border-gray-700">
+        <div className="flex flex-col gap-3 p-3 bg-gray-900 text-white rounded-xl shadow-lg">
           <p className="font-semibold text-lg">
             Are you sure you want to delete this booking?
           </p>

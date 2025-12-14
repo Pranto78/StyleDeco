@@ -5,6 +5,7 @@ import hero2 from '../../assets/Picture2.jpg';
 import hero3 from '../../assets/Picture3.jpg';
 import hero4 from '../../assets/Picture4.jpg';
 import hero5 from '../../assets/Picture5.jpg';
+import { Link } from 'react-router-dom';
 
 const images = [hero1, hero2, hero3, hero4, hero5];
 
@@ -50,13 +51,14 @@ const Hero = () => {
         >
           Transform Your Space with Stunning Decorations!
         </motion.h1>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          className="btn-primary-gradient text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:opacity-90 transition"
-        >
-          Book Decoration Service
-        </motion.button>
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+          <Link
+            to="/services"
+            className="btn-primary-gradient text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:opacity-90 transition inline-block"
+          >
+            Book Decoration Service
+          </Link>
+        </motion.div>
       </div>
     </div>
   );

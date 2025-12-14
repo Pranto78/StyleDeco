@@ -17,11 +17,14 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const adminRes = await fetch("http://localhost:3000/admin-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password: pass }),
-      });
+      const adminRes = await fetch(
+        "https://server-deco.vercel.app/admin-login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password: pass }),
+        }
+      );
 
       if (adminRes.ok) {
         const data = await adminRes.json();
@@ -43,7 +46,7 @@ const Login = () => {
 
         localStorage.removeItem("adminToken");
 
-        await fetch("http://localhost:3000/api/register-user", {
+        await fetch("https://server-deco.vercel.app/api/register-user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -73,7 +76,7 @@ const Login = () => {
         localStorage.removeItem("adminToken");
         localStorage.removeItem("adminEmail");
 
-        await fetch("http://localhost:3000/api/register-user", {
+        await fetch("https://server-deco.vercel.app/api/register-user", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

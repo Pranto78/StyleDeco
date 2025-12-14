@@ -13,7 +13,7 @@ const ServiceCard = ({ service, onUpdate, onDelete }) => {
   const handleUpdate = async () => {
     try {
       await axios.patch(
-        `http://localhost:3000/services/${service._id}`,
+        `https://server-deco.vercel.app/services/${service._id}`,
         editData,
         {
           headers: { "x-admin-token": adminToken },
@@ -59,9 +59,12 @@ const ServiceCard = ({ service, onUpdate, onDelete }) => {
   // ------------------- FINAL DELETE -------------------
   const handleDeleteConfirmed = async () => {
     try {
-      await axios.delete(`http://localhost:3000/services/${service._id}`, {
-        headers: { "x-admin-token": adminToken },
-      });
+      await axios.delete(
+        `https://server-deco.vercel.app/services/${service._id}`,
+        {
+          headers: { "x-admin-token": adminToken },
+        }
+      );
 
       toast.success("Service deleted");
       onDelete();
