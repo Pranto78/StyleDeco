@@ -17,71 +17,76 @@ const Registration = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  // Sync user to backend
-const syncUserToBackend = async () => {
-  const auth = getAuth();
-  const user = auth.currentUser;
-  if (!user) return console.error("No current user found");
+  // ---------------- VALIDATION (UI ONLY) ----------------
+  const validate = () => {
+    const newErrors = {};
 
-  await user.reload(); // ensure profile is updated
+    if (!name.trim()) newErrors.name = "Name is required";
+    if (!email.trim()) newErrors.email = "Email is required";
+    if (!pass.trim()) newErrors.pass = "Password is required";
+    if (pass && pass.length < 6)
+      newErrors.pass = "Password must be at least 6 characters";
 
-  try {
-    await axiosSecure.post("/api/register-user", {
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-    });
-    console.log("User synced to backend");
-  } catch (err) {
-    console.error("Backend sync failed:", err.response?.data || err.message);
-  }
-};
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
+  // ---------------- BACKEND SYNC ----------------
+  const syncUserToBackend = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (!user) return;
 
-  // EMAIL/PASSWORD REGISTRATION
- const handleRegister = async () => {
-   if (!name.trim() || !email.trim() || !pass.trim()) {
-     toast.error("All fields are required");
-     return;
-   }
+    await user.reload();
 
-   setLoading(true);
-   try {
-     // 1️⃣ Create Firebase user
-     const result = await registerUser(email, pass);
+    try {
+      await axiosSecure.post("/api/register-user", {
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      });
+    } catch (err) {
+      console.error("Backend sync failed:", err.response?.data || err.message);
+    }
+  };
 
-     // 2️⃣ Update profile
-     await updateUserProfile({
-       displayName: name,
-       photoURL: photo || "https://i.ibb.co/4pB1q7q/user.png",
-     });
+  // ---------------- EMAIL REGISTRATION ----------------
+  const handleRegister = async () => {
+    if (!validate()) return;
 
-     // 3️⃣ Sync to backend with Firebase token
-     await syncUserToBackend();
-
-     toast.success("Registration successful!");
-     localStorage.setItem("role", "user");
-     navigate("/");
-   } catch (err) {
-     console.error(err);
-     toast.error(err.message || "Registration failed");
-   } finally {
-     setLoading(false);
-   }
- };
-
-  // GOOGLE SIGNUP
-  const handleGoogleSignup = async () => {
     setLoading(true);
     try {
-      const result = await signInGoogle();
-      await syncUserToBackend(result.user);
+      await registerUser(email, pass);
 
-      toast.success("Welcome with Google!");
+      await updateUserProfile({
+        displayName: name,
+        photoURL: photo || "https://i.ibb.co/4pB1q7q/user.png",
+      });
+
+      await syncUserToBackend();
+
+      toast.success("Registration successful!");
       localStorage.setItem("role", "user");
       navigate("/");
     } catch (err) {
-      console.error(err);
+      toast.error(err.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---------------- GOOGLE SIGNUP ----------------
+  const handleGoogleSignup = async () => {
+    setLoading(true);
+    try {
+      await signInGoogle();
+      await syncUserToBackend();
+
+      toast.success("Welcome to StyleDecor!");
+      localStorage.setItem("role", "user");
+      navigate("/");
+    } catch (err) {
       toast.error(err.message || "Google signup failed");
     } finally {
       setLoading(false);
@@ -89,88 +94,104 @@ const syncUserToBackend = async () => {
   };
 
   return (
-    <div className="min-h-screen bg-transparent flex items-center justify-center px-4">
-      <div className="hero-content flex-col lg:flex-row shadow-xl rounded-2xl bg-transparent-md p-10 gap-12">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-transparent mt-18">
+      <div className="hero-content flex-col lg:flex-row gap-14">
+        {/* LEFT TEXT */}
         <div className="max-w-md text-center lg:text-left">
-          <h1 className="text-5xl font-bold">Create an Account</h1>
-          <p className="py-6 text-base-content/70">
-            Register and get full access to booking & dashboard.
+          <h1 className="text-5xl font-bold text-primary-gradient p-5">
+            Join StyleDecor
+          </h1>
+          <p className="p-5 text-base-content/70">
+            Create your account and unlock the full experience.
           </p>
         </div>
 
-        <div className="card bg-base-100 w-full max-w-sm shadow-xl border border-base-300">
+        {/* REGISTER CARD */}
+        <div
+          className="
+            card w-full max-w-xl
+            bg-transparent backdrop-blur-xl
+            border border-blue-400/30
+            shadow-2xl
+            rounded-2xl
+            ring-1 ring-blue-500/20
+            hover:ring-blue-500/40
+            transition-all duration-300
+          "
+        >
           <div className="card-body">
             <fieldset className="flex flex-col gap-4" disabled={loading}>
-              <div>
-                <label className="label font-medium">Name</label>
-                <div className="relative">
-                  <User
-                    className="absolute left-3 top-3 opacity-70"
-                    size={20}
-                  />
-                  <input
-                    type="text"
-                    className="input input-bordered w-full pl-10"
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
+              {/* NAME */}
+              <label className="label font-medium">Name</label>
+              <div className="relative">
+                <User className="absolute left-3 top-2 opacity-70" size={20} />
+                <input
+                  type="text"
+                  className={`input bg-transparent w-full pl-10
+                    ${errors.name ? "border-red-400" : "focus:border-blue-400"}
+                  `}
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              {errors.name && (
+                <p className="text-red-400 text-sm">{errors.name}</p>
+              )}
+
+              {/* EMAIL */}
+              <label className="label font-medium">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-2 opacity-70" size={20} />
+                <input
+                  type="email"
+                  className={`input bg-transparent w-full pl-10
+                    ${errors.email ? "border-red-400" : "focus:border-blue-400"}
+                  `}
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              {errors.email && (
+                <p className="text-red-400 text-sm">{errors.email}</p>
+              )}
+
+              {/* PASSWORD */}
+              <label className="label font-medium">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-2 opacity-70" size={20} />
+                <input
+                  type="password"
+                  className={`input bg-transparent w-full pl-10
+                    ${errors.pass ? "border-red-400" : "focus:border-blue-400"}
+                  `}
+                  placeholder="••••••••"
+                  value={pass}
+                  onChange={(e) => setPass(e.target.value)}
+                />
+              </div>
+              {errors.pass && (
+                <p className="text-red-400 text-sm">{errors.pass}</p>
+              )}
+
+              {/* PHOTO */}
+              <label className="label font-medium">Photo URL (optional)</label>
+              <div className="relative">
+                <ImageIcon
+                  className="absolute left-3 top-2 opacity-70"
+                  size={20}
+                />
+                <input
+                  type="url"
+                  className="input bg-transparent w-full pl-10 focus:border-blue-400"
+                  placeholder="https://i.ibb.co/..."
+                  value={photo}
+                  onChange={(e) => setPhoto(e.target.value)}
+                />
               </div>
 
-              <div>
-                <label className="label font-medium">Email</label>
-                <div className="relative">
-                  <Mail
-                    className="absolute left-3 top-3 opacity-70"
-                    size={20}
-                  />
-                  <input
-                    type="email"
-                    className="input input-bordered w-full pl-10"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="label font-medium">Password</label>
-                <div className="relative">
-                  <Lock
-                    className="absolute left-3 top-3 opacity-70"
-                    size={20}
-                  />
-                  <input
-                    type="password"
-                    className="input input-bordered w-full pl-10"
-                    placeholder="••••••••"
-                    value={pass}
-                    onChange={(e) => setPass(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="label font-medium">
-                  Photo URL (optional)
-                </label>
-                <div className="relative">
-                  <ImageIcon
-                    className="absolute left-3 top-3 opacity-70"
-                    size={20}
-                  />
-                  <input
-                    type="url"
-                    className="input input-bordered w-full pl-10"
-                    placeholder="https://i.ibb.co/..."
-                    value={photo}
-                    onChange={(e) => setPhoto(e.target.value)}
-                  />
-                </div>
-              </div>
-
+              {/* REGISTER BUTTON */}
               <button
                 className="btn btn-neutral mt-4 w-full"
                 onClick={handleRegister}
@@ -179,12 +200,13 @@ const syncUserToBackend = async () => {
                 {loading ? (
                   <span className="loading loading-spinner"></span>
                 ) : (
-                  "Register"
+                  "Create Account"
                 )}
               </button>
 
               <div className="divider text-sm">OR</div>
 
+              {/* GOOGLE */}
               <button
                 className="btn btn-outline w-full flex items-center gap-2"
                 onClick={handleGoogleSignup}
@@ -196,7 +218,7 @@ const syncUserToBackend = async () => {
 
               <p className="text-center text-sm pt-2">
                 Already have an account?{" "}
-                <Link to="/login" className="link link-primary">
+                <Link to="/login" className="text-blue-400 underline">
                   Login here
                 </Link>
               </p>
