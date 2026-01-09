@@ -68,3 +68,7 @@ background: linear-gradient(90deg,
 
 
 /* ============================== */
+
+*{
+    font-family: "Trade Winds", system-ui;
+}

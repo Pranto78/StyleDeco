@@ -35,25 +35,25 @@ const Navbar = () => {
   const links = (
     <>
       <li>
-        <NavLink className="font-bold" to="/" style={getLinkStyle}>
+        <NavLink  to="/" style={getLinkStyle}>
           <House size={15} />
           Home
         </NavLink>
       </li>
       <li>
-        <NavLink className="font-bold" to="/services" style={getLinkStyle}>
+        <NavLink className="" to="/services" style={getLinkStyle}>
           <ClipboardPaste size={15} />
           Services
         </NavLink>
       </li>
       <li>
-        <NavLink className="font-bold" to="/about" style={getLinkStyle}>
+        <NavLink className="" to="/about" style={getLinkStyle}>
           <CircleAlert size={15} />
           About
         </NavLink>
       </li>
       <li>
-        <NavLink className="font-bold" to="/contact" style={getLinkStyle}>
+        <NavLink className="" to="/contact" style={getLinkStyle}>
           <PhoneForwarded size={15} />
           Contact
         </NavLink>
@@ -61,7 +61,7 @@ const Navbar = () => {
 
       {user || adminEmail ? (
         <li>
-          <NavLink className="font-bold" to="/dashboard" style={getLinkStyle}>
+          <NavLink className="" to="/dashboard" style={getLinkStyle}>
             <LayoutDashboard size={15} />
             Dashboard
           </NavLink>
@@ -155,7 +155,18 @@ const Navbar = () => {
               </div>
             </div>
 
-            <ul className="menu menu-sm dropdown-content bg-base-100 mt-3 w-40 shadow rounded-box">
+            <motion.ul
+  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+  animate={{ opacity: 1, y: 0, scale: 1 }}
+  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+  transition={{
+    type: "spring",
+    stiffness: 200,
+    damping: 18,
+  }}
+  className="menu menu-sm dropdown-content bg-base-100 mt-3 w-44 shadow-xl rounded-2xl backdrop-blur-md"
+>
+
               <li>
                 <Link to="/dashboard/profile">Profile</Link>
               </li>
@@ -169,14 +180,14 @@ const Navbar = () => {
                   <LogOut size={16} /> Logout
                 </motion.button>
               </li>
-            </ul>
+            </motion.ul>
           </div>
         ) : (
           <>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Link
                 to="/login"
-                className="btn-primary-gradient px-3 py-1 rounded-2xl text-white flex items-center gap-2"
+                className="btn-primary-gradient px-3 py-1 rounded-2xl text-black flex items-center gap-2"
               >
                 <LogIn size={16} /> Login
               </Link>
@@ -185,7 +196,7 @@ const Navbar = () => {
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Link
                 to="/signup"
-                className="btn-primary-gradient px-3 py-1 rounded-2xl text-white flex items-center gap-2"
+                className="btn-primary-gradient px-3 py-1 rounded-2xl text-black flex items-center gap-2"
               >
                 <UserPlus size={16} /> Sign Up
               </Link>

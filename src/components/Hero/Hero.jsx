@@ -47,14 +47,14 @@ const Hero = () => {
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 1 }}
-          className="text-4xl md:text-6xl font-bold text-white text-center mb-6"
+          className="text-2xl md:text-5xl text-white text-center mb-6"
         >
           Transform Your Space with Stunning Decorations!
         </motion.h1>
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
           <Link
             to="/services"
-            className="btn-primary-gradient text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:opacity-90 transition inline-block"
+            className="btn-primary-gradient text-black px-6 py-3 rounded-full font-semibold shadow-lg hover:opacity-90 transition inline-block"
           >
             Book Decoration Service
           </Link>
