@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import UseAuthContext from "../../Hooks/UseAuthContext";
 import decoLogo from "../../assets/yyy.png";
 import toast from "react-hot-toast";
-import { LogIn, UserPlus, LogOut } from "lucide-react";
+import { LogIn, UserPlus, LogOut, House, ClipboardPaste, CircleAlert, PhoneForwarded, LayoutDashboard } from "lucide-react";
 import { motion } from "framer-motion";
 
 // Active link style function
@@ -35,29 +35,34 @@ const Navbar = () => {
   const links = (
     <>
       <li>
-        <NavLink to="/" style={getLinkStyle}>
+        <NavLink className="font-bold" to="/" style={getLinkStyle}>
+          <House size={15} />
           Home
         </NavLink>
       </li>
       <li>
-        <NavLink to="/services" style={getLinkStyle}>
+        <NavLink className="font-bold" to="/services" style={getLinkStyle}>
+          <ClipboardPaste size={15} />
           Services
         </NavLink>
       </li>
       <li>
-        <NavLink to="/about" style={getLinkStyle}>
+        <NavLink className="font-bold" to="/about" style={getLinkStyle}>
+          <CircleAlert size={15} />
           About
         </NavLink>
       </li>
       <li>
-        <NavLink to="/contact" style={getLinkStyle}>
+        <NavLink className="font-bold" to="/contact" style={getLinkStyle}>
+          <PhoneForwarded size={15} />
           Contact
         </NavLink>
       </li>
 
       {user || adminEmail ? (
         <li>
-          <NavLink to="/dashboard" style={getLinkStyle}>
+          <NavLink className="font-bold" to="/dashboard" style={getLinkStyle}>
+            <LayoutDashboard size={15} />
             Dashboard
           </NavLink>
         </li>
@@ -79,8 +84,36 @@ const Navbar = () => {
     </>
   );
 
+
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="navbar bg-transparent backdrop-blur-sm fixed top-0 w-full z-50 px-4">
+<motion.div
+  initial={false}
+  animate={{
+    borderRadius: scrolled ? "9999px" : "0px",
+    marginTop: scrolled ? "12px" : "0px",
+    width: scrolled ? "95%" : "100%",
+    boxShadow: scrolled
+      ? "0 10px 30px rgba(0,0,0,0.15)"
+      : "none",
+  }}
+  transition={{
+    type: "spring",
+    stiffness: 120,
+    damping: 20,
+  }}
+  className="navbar bg-transparent backdrop-blur-sm fixed top-0 left-1/2 -translate-x-1/2 z-50 px-4"
+>
       {/* Navbar Start */}
       <div className="navbar-start">
         <div className="dropdown">
@@ -131,7 +164,7 @@ const Navbar = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={handleLogout}
-                  className="btn-primary-gradient flex items-center gap-2"
+                  className="btn-primary-gradient rounded-2xl flex items-center gap-2"
                 >
                   <LogOut size={16} /> Logout
                 </motion.button>
@@ -143,7 +176,7 @@ const Navbar = () => {
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Link
                 to="/login"
-                className="btn-primary-gradient px-3 py-1 rounded text-white flex items-center gap-2"
+                className="btn-primary-gradient px-3 py-1 rounded-2xl text-white flex items-center gap-2"
               >
                 <LogIn size={16} /> Login
               </Link>
@@ -152,7 +185,7 @@ const Navbar = () => {
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Link
                 to="/signup"
-                className="btn-primary-gradient px-3 py-1 rounded text-white flex items-center gap-2"
+                className="btn-primary-gradient px-3 py-1 rounded-2xl text-white flex items-center gap-2"
               >
                 <UserPlus size={16} /> Sign Up
               </Link>
@@ -160,7 +193,7 @@ const Navbar = () => {
           </>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
