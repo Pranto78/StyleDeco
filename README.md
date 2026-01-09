@@ -1,16 +1,155 @@
-# React + Vite
+# StyleDecor – Smart Home & Ceremony Decoration Booking System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 Project Overview
 
-Currently, two official plugins are available:
+**StyleDecor** is a full-stack web application designed for a local home & ceremony decoration company. The platform allows users to explore decoration services, book consultations or on-site decoration services, make secure payments, and track service progress. It also provides powerful role-based dashboards for admins and decorators to manage services, bookings, and project workflows efficiently.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This project focuses on solving real-world problems such as manual booking, poor service coordination, and lack of service tracking in local decoration businesses.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🎯 Purpose of the Project
 
-## Expanding the ESLint configuration
+* Digitize the decoration service booking process
+* Reduce walk-in crowd and manual appointment handling
+* Manage decorators, services, and bookings efficiently
+* Provide real-time project status updates
+* Enable secure online payments and tracking
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🌐 Live Website
+
+* **Live URL:** https://style-deco.web.app/
+* **Server Repo URL:** [https://github.com/Pranto78/Deco-Server.git
+
+---
+
+## ✨ Key Features
+
+### 🔐 Authentication & Security
+
+* Email & password authentication
+* Social login support
+* JWT-based protected routes
+* Role-based access control (Admin, Decorator, User)
+
+### 🏠 User Features
+
+* Browse decoration services and packages
+* Search and filter services by category and budget
+* View detailed service information
+* Book consultation or on-site decoration services
+* Secure payment using Stripe
+* View booking history and payment history
+* Cancel or update bookings
+* Track service/project status step-by-step
+
+### 🛠 Admin Features
+
+* Manage decoration services & packages (CRUD)
+* Manage decorators (CRUD)
+* Assign decorators to paid on-site services
+* Approve or disable decorator accounts
+* Manage all bookings
+* Monitor revenue and payments
+* View analytics (service demand, booking statistics)
+
+### 🎨 Decorator Features
+
+* View assigned projects
+* See daily schedule
+* Update project status (Assigned → Completed)
+* View earnings and payment summary
+
+### 📊 Service Workflow Status
+
+* Assigned
+* Planning Phase
+* Materials Prepared
+* On the Way
+* Setup in Progress
+* Completed
+
+### 🧭 UI & UX
+
+* Modern and clean UI using DaisyUI
+* Fully responsive for mobile, tablet, and desktop
+* Smooth animations using Framer Motion
+* Global loading spinner and error handling
+* Toast notifications for all actions
+
+---
+
+## 📄 Main Pages
+
+* Home
+* Services
+* Service Details
+* Booking
+* Payment
+* Dashboard (Role-based)
+* Login / Register
+* Error Page
+
+---
+
+## 🧰 Technologies & NPM Packages Used
+
+### Frontend
+
+* React
+* React Router DOM
+* Axios
+* Firebase Authentication
+* Framer Motion
+* React Hook Form
+* React Hot Toast
+* React Leaflet
+* DaisyUI & Tailwind CSS
+
+### Backend
+
+* Node.js
+* Express.js
+* MongoDB
+* JWT (jsonwebtoken)
+* Stripe
+* CORS
+* dotenv
+
+---
+
+## 🔑 Environment Variables
+
+Environment variables are securely stored using `.env` files.
+
+### Client
+
+* Firebase configuration keys
+
+### Server
+
+* MongoDB URI
+* JWT Secret
+* Stripe Secret Key
+
+---
+
+## 🚀 Deployment
+
+* Client deployed on **Firebase**
+* Server deployed on **Vercel**
+* Environment variables properly configured
+* No CORS, 404, or reload issues on live site
+
+
+---
+
+## 📌 Conclusion
+
+StyleDecor is a complete real-world service booking and management system that demonstrates full-stack development skills, secure authentication, payment integration, role-based dashboards, and a smooth user experience. The project is built following modern best practices and scalable architecture.
+
+---
+
+⭐ *Thank you for checking out this project!*
