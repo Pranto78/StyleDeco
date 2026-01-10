@@ -72,3 +72,19 @@ background: linear-gradient(90deg,
 *{
     font-family: "Trade Winds", system-ui;
 }
+
+
+html,
+body {
+    overflow-y: auto;
+    /* or 'scroll' – ensures scrolling works */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+body::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, and newer Edge */
+}

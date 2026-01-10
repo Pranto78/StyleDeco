@@ -21,7 +21,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full h-[65vh] overflow-hidden">
       {/* Sliding images */}
       <div className="flex w-full h-full">
         <motion.div
