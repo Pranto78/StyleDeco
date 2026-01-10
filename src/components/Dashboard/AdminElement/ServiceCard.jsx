@@ -12,9 +12,11 @@ const ServiceCard = ({ service, onUpdate, onDelete }) => {
   // ------------------- UPDATE SERVICE -------------------
   const handleUpdate = async () => {
     try {
+      const { _id, createdAt, ...safeData } = editData;
+
       await axios.patch(
         `https://server-deco.vercel.app/services/${service._id}`,
-        editData,
+        safeData,
         {
           headers: { "x-admin-token": adminToken },
         }
@@ -24,9 +26,11 @@ const ServiceCard = ({ service, onUpdate, onDelete }) => {
       setIsEditing(false);
       onUpdate();
     } catch (err) {
+      console.error(err.response?.data || err.message);
       toast.error("Update failed");
     }
   };
+
 
   // ------------------- DELETE CONFIRM TOAST -------------------
   const handleDeleteToast = () => {
