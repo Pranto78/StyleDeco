@@ -158,13 +158,13 @@ const AssignDecorator = () => {
                 </td>
                 <td className="px-4 py-2 text-center">
                   {user.decoratorAssigned ? (
-                    <span className="inline-block px-3 py-1 rounded-full bg-primary-gradient text-white font-bold">
+                    <span className="inline-block px-3 py-1 rounded-full bg-primary-gradient text-black font-bold">
                       Assigned
                     </span>
                   ) : (
                     <button
                       onClick={() => openModal(user)}
-                      className="px-3 py-1 rounded-lg bg-blue-400 text-white font-bold hover:bg-blue-500 shadow-md"
+                      className="px-3 py-1 rounded-lg bg-blue-400 text-gray-800 font-bold hover:bg-blue-500 shadow-md"
                     >
                       Assign
                     </button>

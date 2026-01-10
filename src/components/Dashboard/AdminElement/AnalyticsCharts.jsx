@@ -1,133 +1,143 @@
-// src/components/Dashboard/AnalyticsCharts.jsx
+// src/components/Dashboard/AnalyticsPieChart.jsx
 import React, { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Pie, Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import UseAxiosSecure from "../../../Hooks/UseAxiosSecure";
-import Loading from "../../Loading/Loading";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const AnalyticsCharts = () => {
   const axiosSecure = UseAxiosSecure();
-  const [bookings, setBookings] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchAnalytics = async () => {
       try {
         const res = await axiosSecure.get("/admin/bookings");
-        setBookings(res.data);
-      } catch (error) {
-        console.error("Error loading histogram data:", error);
+        const bookings = res.data;
+
+        const total = bookings.length;
+        const assigned = bookings.filter((b) => b.decoratorAssigned).length;
+        const unassigned = total - assigned;
+
+        const paid = bookings.filter((b) => b.status === "paid").length;
+        const pending = total - paid;
+
+        setStats({
+          total,
+          assigned,
+          unassigned,
+          paid,
+          pending,
+        });
+      } catch (err) {
+        console.error("Analytics error:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBookings();
-
-    // Auto-refresh every 5 seconds
-    const interval = setInterval(fetchBookings, 5000);
-
-    return () => clearInterval(interval);
+    fetchAnalytics();
   }, [axiosSecure]);
 
-  const bookingCount = bookings.reduce((acc, b) => {
-    acc[b.userEmail] = (acc[b.userEmail] || 0) + 1;
-    return acc;
-  }, {});
-
-  const chartData = {
-    labels: Object.keys(bookingCount),
-    datasets: [
-      {
-        label: "Number of Services Booked",
-        data: Object.values(bookingCount),
-        backgroundColor: (context) => {
-          // Gradient effect for bars
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) return "rgba(99, 102, 241, 0.7)";
-          const gradient = ctx.createLinearGradient(
-            0,
-            chartArea.bottom,
-            0,
-            chartArea.top
-          );
-          gradient.addColorStop(0, "rgba(99, 102, 241, 0.7)");
-          gradient.addColorStop(1, "rgba(139, 92, 246, 0.9)");
-          return gradient;
-        },
-        borderRadius: 6, // Rounded bars
-        barPercentage: 0.6, // Thinner bars for mobile
-      },
-    ],
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false, // Full responsiveness
-    plugins: {
-      legend: {
-        position: "top",
-        labels: { color: "#ffffff" }, // White legend for dark theme
-      },
-      title: {
-        display: true,
-        text: "Services Booked by Users",
-        color: "#ffffff", // White title for dark theme
-        font: { size: 18, weight: "600" },
-      },
-      tooltip: {
-        bodyColor: "#ffffff",
-        titleColor: "#ffffff",
-        backgroundColor: "rgba(0,0,0,0.8)",
-      },
-    },
-    scales: {
-      x: {
-        ticks: { color: "#ffffff", font: { size: 12 } },
-        grid: { color: "rgba(255,255,255,0.1)" },
-      },
-      y: {
-        beginAtZero: true,
-        ticks: { stepSize: 1, color: "#ffffff", font: { size: 12 } },
-        grid: { color: "rgba(255,255,255,0.1)" },
-      },
-    },
-  };
-
-  if (loading)
+  if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-transparent bg-opacity-20">
-        <span className="loading loading-infinity loading-xl text-6xl text-blue-500"></span>
+      <div className="flex justify-center items-center min-h-[300px]">
+        <span className="loading loading-spinner loading-lg text-primary"></span>
       </div>
     );
+  }
+
+  // -------------------------
+  // DECORATOR ASSIGNMENT PIE
+const decoratorData = {
+  labels: ["Assigned to Decorators", "Not Assigned"],
+  datasets: [
+    {
+      data: [stats.assigned, stats.unassigned],
+      backgroundColor: ["rgba(99,102,241,0.95)", "rgba(239,68,68,0.9)"],
+      borderWidth: 0,
+      spacing: 5, 
+      borderRadius: 2, 
+      hoverOffset: 12, 
+    },
+  ],
+};
+
+const paymentData = {
+  labels: ["Paid Bookings", "Pending Bookings"],
+  datasets: [
+    {
+      data: [stats.paid, stats.pending],
+      backgroundColor: ["rgba(34,197,94,0.95)", "rgba(234,179,8,0.95)"],
+      borderWidth: 0,
+      spacing: 5,
+      borderRadius: 2,
+      hoverOffset: 12,
+    },
+  ],
+};
+
+
+ const options = {
+   responsive: true,
+   maintainAspectRatio: false,
+   cutout: "70%", // thinner ring = premium
+   plugins: {
+     legend: {
+       position: "bottom",
+       labels: {
+         color: "#e5e7eb",
+         font: { size: 12, weight: "500" },
+         padding: 16,
+       },
+     },
+     tooltip: {
+       backgroundColor: "rgba(0,0,0,0.85)",
+       titleColor: "#fff",
+       bodyColor: "#fff",
+       padding: 14,
+       cornerRadius: 8,
+     },
+   },
+   animation: {
+     duration: 900,
+     easing: "easeOutQuart",
+   },
+ };
 
   return (
-    <div className="p-4 bg-gray-900 rounded-lg shadow-lg w-full">
-      {bookings.length === 0 ? (
-        <p className="text-white">No booking data found.</p>
-      ) : (
-        <div style={{ width: "100%", minHeight: "350px" }}>
-          <Bar data={chartData} options={options} />
+    <div className="grid md:grid-cols-2 gap-6 p-6 bg-transparent rounded-3xl shadow-xl border border-gray-300/10">
+      {/* DECORATOR RATIO */}
+      <div className="bg-transparent rounded-xl p-5 flex flex-col items-center">
+        <h3 className="text-white text-base font-semibold mb-3">
+          Decorator Assignment
+        </h3>
+
+        <div className="w-[220px] h-[220px]">
+          <Doughnut data={decoratorData} options={options} />
         </div>
-      )}
+
+        <p className="text-gray-400 mt-3 text-sm">
+          Total Bookings: {stats.total}
+        </p>
+      </div>
+
+      {/* PAYMENT RATIO */}
+      <div className="bg-transparent  rounded-xl p-5 flex flex-col items-center">
+        <h3 className="text-white text-base font-semibold mb-3">
+          Payment Status
+        </h3>
+
+        <div className="w-[220px] h-[220px]">
+          <Doughnut data={paymentData} options={options} />
+        </div>
+
+        <p className="text-gray-400 mt-3 text-sm">
+          Paid: {stats.paid} | Pending: {stats.pending}
+        </p>
+      </div>
     </div>
   );
 };

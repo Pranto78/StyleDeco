@@ -121,7 +121,7 @@ const Login = () => {
             Welcome to StyleDecor again
           </h1>
           <p className="py-6 text-base-content/70">
-            Fast, secure login to your dashboard.
+            Login to unlock our services and experience hassle-free support!
           </p>
         </div>
 

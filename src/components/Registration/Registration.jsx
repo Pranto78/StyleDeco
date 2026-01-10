@@ -102,7 +102,8 @@ const Registration = () => {
             Join StyleDecor
           </h1>
           <p className="p-5 text-base-content/70">
-            Create your account and unlock the full experience.
+            Where Your Home Meets Your Style! Create your account and unlock the
+            full experience.
           </p>
         </div>
 
