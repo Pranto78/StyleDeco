@@ -1,18 +1,18 @@
-import Navbar from "./../components/Navbar/Navbar";
-import Footer from "./../components/Footer/Footer";
+import { useState } from "react";
+import Navbar from "../components/Navbar/Navbar";
+import Footer from "../components/Footer/Footer";
 import { Outlet } from "react-router-dom";
 import StarField from "../components/Bg/StarField";
-// import Starfield from "../components/Starfield";
 
 const Root = () => {
-  return (
-    <div className="relative min-h-screen">
-      {/* ⭐ dynamic math-based starfield */}
-      <StarField />
+  const [theme, setTheme] = useState("dark");
 
-      {/* real content */}
+  return (
+    <div className={`relative min-h-screen ${theme}`}>
+      <StarField theme={theme} />
+
       <div className="relative z-10">
-        <Navbar />
+        <Navbar theme={theme} setTheme={setTheme} />
         <Outlet />
         <Footer />
       </div>

@@ -3,6 +3,8 @@ import { Link, NavLink } from "react-router-dom";
 import UseAuthContext from "../../Hooks/UseAuthContext";
 import decoLogo from "../../assets/yyy.png";
 import toast from "react-hot-toast";
+import { Sun, Moon } from "lucide-react";
+
 import {
   LogIn,
   UserPlus,
@@ -25,9 +27,10 @@ const getLinkStyle = ({ isActive }) => ({
 
 
 
+
 const adminEmail = localStorage.getItem("adminEmail");
 
-const Navbar = () => {
+const Navbar = ({ theme, setTheme }) => {
   const { user, logOut } = UseAuthContext();
   const [scrolled, setScrolled] = useState(false);
 
@@ -43,6 +46,30 @@ const Navbar = () => {
     } finally {
       window.location.href = "/";
     }
+  };
+
+  const ThemeToggle = ({ theme, setTheme }) => {
+    return (
+      <motion.button
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        className="relative w-10 h-10 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-md shadow-lg"
+        whileTap={{ scale: 0.9 }}
+      >
+        <motion.div
+          key={theme}
+          initial={{ rotate: -90, scale: 0 }}
+          animate={{ rotate: 0, scale: 1 }}
+          exit={{ rotate: 90, scale: 0 }}
+          transition={{ type: "spring", stiffness: 200 }}
+        >
+          {theme === "dark" ? (
+            <Moon className="text-blue-400" />
+          ) : (
+            <Sun className="text-orange-400" />
+          )}
+        </motion.div>
+      </motion.button>
+    );
   };
 
   const links = (
@@ -83,7 +110,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -195,6 +221,7 @@ const Navbar = () => {
 
       {/* Navbar End (DESKTOP) — UNCHANGED */}
       <div className="navbar-end hidden lg:flex items-center gap-3">
+        <ThemeToggle theme={theme} setTheme={setTheme} />
         {user ? (
           <div className="dropdown dropdown-end">
             <div tabIndex={0} className="btn btn-ghost btn-circle avatar">
