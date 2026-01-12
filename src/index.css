@@ -22,6 +22,28 @@
             );
 }
 
+.bg-secondary-gradient {
+    background: var(--btn-secondary-gradient);
+}
+
+.bg-primary-gradient {
+    background: var(--btn-primary-gradient);
+}
+
+@plugin "daisyui/theme" {
+    name: "light";
+    default: false;
+
+    --color-base-100: #ffffff;
+    --color-base-content: #111827;
+
+    --color-primary: #2563eb;
+    --color-secondary: #e5e7eb;
+
+    --btn-primary-gradient: linear-gradient(90deg, #2563eb, #06b6d4, #22c55e);
+    --btn-secondary-gradient: linear-gradient(90deg, #f3f4f6, #e5e7eb);
+}
+
 /* Gradient utility classes */
 .btn-primary-gradient {
     background: var(--btn-primary-gradient);
@@ -58,12 +80,6 @@ background: linear-gradient(90deg,
     color: transparent;
 }
 
-.bg-secondary-gradient {
-    background: var(--btn-secondary-gradient);
-}
-.bg-primary-gradient {
-    background: var(--btn-primary-gradient);
-}
 
 
 

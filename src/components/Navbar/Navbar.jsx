@@ -18,11 +18,11 @@ import {
 import { motion } from "framer-motion";
 
 // Active link style
-const getLinkStyle = ({ isActive }) => ({
-  color: isActive ? "#2563eb" : "",
-  borderBottom: isActive ? "2px solid #2563eb" : "none",
-  paddingBottom: "2px",
-});
+// const getLinkStyle = ({ isActive }) => ({
+//   color: isActive ? "#2563eb" : "",
+//   borderBottom: isActive ? "2px solid #2563eb" : "none",
+//   paddingBottom: "2px",
+// });
 
 
 
@@ -75,29 +75,79 @@ const Navbar = ({ theme, setTheme }) => {
   const links = (
     <>
       <li>
-        <NavLink to="/" style={getLinkStyle}>
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `flex items-center gap-2 pb-1 transition-colors
+     ${
+       isActive
+         ? "text-blue-600 border-b-2 border-blue-600"
+         : "text-black dark:text-gray-200"
+     }`
+          }
+        >
           <House size={15} /> Home
         </NavLink>
       </li>
       <li>
-        <NavLink to="/services" style={getLinkStyle}>
+        <NavLink
+          to="/services"
+          className={({ isActive }) =>
+            `flex items-center gap-2 pb-1 transition-colors
+     ${
+       isActive
+         ? "text-blue-600 border-b-2 border-blue-600"
+         : "text-black dark:text-gray-200"
+     }`
+          }
+        >
           <ClipboardPaste size={15} /> Services
         </NavLink>
       </li>
       <li>
-        <NavLink to="/about" style={getLinkStyle}>
+        <NavLink
+          to="/about"
+          className={({ isActive }) =>
+            `flex items-center gap-2 pb-1 transition-colors
+     ${
+       isActive
+         ? "text-blue-600 border-b-2 border-blue-600"
+         : "text-gray-800 dark:text-gray-200"
+     }`
+          }
+        >
           <CircleAlert size={15} /> About
         </NavLink>
       </li>
       <li>
-        <NavLink to="/contact" style={getLinkStyle}>
+        <NavLink
+          to="/contact"
+          className={({ isActive }) =>
+            `flex items-center gap-2 pb-1 transition-colors
+     ${
+       isActive
+         ? "text-blue-600 border-b-2 border-blue-600"
+         : "text-gray-800 dark:text-gray-200"
+     }`
+          }
+        >
           <PhoneForwarded size={15} /> Contact
         </NavLink>
       </li>
 
       {(user || adminEmail) && (
         <li>
-          <NavLink to="/dashboard" style={getLinkStyle}>
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              `flex items-center gap-2 pb-1 transition-colors
+     ${
+       isActive
+         ? "text-blue-600 border-b-2 border-blue-600"
+         : "text-gray-800 dark:text-gray-200"
+     }`
+            }
+          >
             <LayoutDashboard size={15} /> Dashboard
           </NavLink>
         </li>
@@ -123,7 +173,12 @@ const Navbar = ({ theme, setTheme }) => {
         boxShadow: scrolled ? "0 10px 30px rgba(0,0,0,0.15)" : "none",
       }}
       transition={{ type: "spring", stiffness: 120, damping: 20 }}
-      className="navbar bg-transparent backdrop-blur-sm fixed top-0 left-1/2 -translate-x-1/2 z-50 px-4"
+      className="
+navbar fixed top-0 left-1/2 -translate-x-1/2 z-50 px-4
+bg-white/80 dark:bg-black/30
+backdrop-blur-sm
+text-gray-900 dark:text-gray-100
+"
     >
       {/* Navbar Start */}
       <div className="navbar-start">
